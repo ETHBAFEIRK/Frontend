@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { BrowserProvider, formatEther } from 'ethers';
+import { BrowserProvider, formatEther, Contract, formatUnits } from 'ethers';
 import './App.css';
 import Header from './components/Header';
 import TokenTable from './components/TokenTable'; // Renamed from TokenList
@@ -129,6 +129,12 @@ function App() {
   const [currentNetworkId, setCurrentNetworkId] = useState(INITIAL_NETWORK_ID);
   const selectedNetwork = NETWORKS[currentNetworkId] || null;
 
+const ERC20_ABI = [
+  "function balanceOf(address owner) view returns (uint256)",
+  "function decimals() view returns (uint8)",
+  "function symbol() view returns (string)",
+  "function name() view returns (string)" // Added name for completeness
+];
 
   // Fetch rates from /rates endpoint
   const fetchRates = useCallback(async () => {
@@ -205,16 +211,37 @@ function App() {
       }
     ];
 
-    // Simulate fetching balances for ERC20 tokens (replace with actual calls)
+    // Fetch balances for ERC20 tokens
     const updatedFetchedTokens = await Promise.all(fetchedTokens.map(async token => {
-      if (token.isNative) return token; // ETH balance is already available via `balance` state
+      if (token.isNative) {
+        // Ensure native token quantity is updated if balance state changes
+        return { ...token, quantity: balance };
+      }
+      if (!token.address || token.address === '0x0000000000000000000000000000000000000000') {
+        // Skip if address is invalid or placeholder for non-native tokens
+        console.warn(`Skipping token ${token.symbol} due to missing or invalid address.`);
+        return { ...token, quantity: 'N/A (No address)' };
+      }
       try {
-        await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
-        return { ...token, quantity: (Math.random() * 1000).toFixed(2) }; // Mock quantity
+        const contract = new Contract(token.address, ERC20_ABI, walletProvider);
+        const [rawBalance, decimals, fetchedSymbol, fetchedName] = await Promise.all([
+          contract.balanceOf(userAddress),
+          contract.decimals(),
+          contract.symbol().catch(() => token.symbol), // Fallback to predefined symbol
+          contract.name().catch(() => token.name)      // Fallback to predefined name
+        ]);
+        
+        const quantity = formatUnits(rawBalance, Number(decimals)); // Ensure decimals is a number
+        return {
+          ...token,
+          quantity: quantity,
+          symbol: fetchedSymbol || token.symbol, // Prefer fetched symbol
+          name: fetchedName || token.name,       // Prefer fetched name
+        };
       } catch (fetchErr) {
-        console.error(`Error fetching balance for ${token.symbol}:`, fetchErr);
+        console.error(`Error fetching data for ${token.symbol} (${token.address}):`, fetchErr);
         setError(prev => prev + `\nError fetching ${token.symbol}.`);
-        return { ...token, quantity: 'Error' };
+        return { ...token, quantity: 'Error', symbol: token.symbol, name: token.name };
       }
     }));
 
