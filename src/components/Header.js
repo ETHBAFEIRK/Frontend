@@ -10,7 +10,8 @@ function Header({
   toggleTestDataMode,
   networks,
   currentNetworkId,
-  handleNetworkChange
+  handleNetworkChange,
+  onComputeRates
 }) {
   const handleConnectWallet = async () => {
     setError(''); // Clear error before attempting to connect
@@ -22,6 +23,27 @@ function Header({
       <div className="logo">MyLogo</div>
       <div className="header-spacer"></div>
       <div className="header-actions">
+        <button
+          style={{
+            fontSize: '0.75em',
+            padding: '2px 8px',
+            marginRight: '1em',
+            borderRadius: '4px',
+            border: '1px solid #888',
+            background: '#f5f5f5',
+            cursor: 'pointer',
+            height: '28px'
+          }}
+          title="Compute best rates"
+          onClick={async (e) => {
+            e.stopPropagation();
+            if (onComputeRates) {
+              await onComputeRates();
+            }
+          }}
+        >
+          Compute
+        </button>
         <div className="toggle-switch-container">
           <span className="toggle-label">{isTestDataMode ? 'Test Data Mode' : 'Real Data Mode'}</span>
           <label className="toggle-switch">

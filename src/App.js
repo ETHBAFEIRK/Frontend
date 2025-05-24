@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { BrowserProvider, formatEther } from 'ethers';
 import './App.css';
 import Header from './components/Header';
@@ -36,6 +36,36 @@ const NETWORKS = {
   }
 };
 
+function reconcileTokensWithRates(tokens, rates) {
+  // Extend each token with rates info if input_symbol matches token.symbol (case-insensitive)
+  if (!Array.isArray(tokens) || !Array.isArray(rates)) return tokens;
+  const ratesBySymbol = {};
+  rates.forEach(rate => {
+    const symbol = (rate.input_symbol || '').toUpperCase();
+    if (!ratesBySymbol[symbol]) ratesBySymbol[symbol] = [];
+    ratesBySymbol[symbol].push(rate);
+  });
+  return tokens.map(token => {
+    const symbol = (token.symbol || '').toUpperCase();
+    const matchingRates = ratesBySymbol[symbol] || [];
+    // For demo, just take the first rate for APR, or keep original
+    let maxApr = token.maxApr;
+    let apr = token.apr;
+    if (matchingRates.length > 0) {
+      // Find max APY among matches
+      const maxApy = Math.max(...matchingRates.map(r => r.apy || 0));
+      maxApr = (maxApy ? maxApy.toFixed(2) + '%' : token.maxApr);
+      apr = apr || maxApr;
+    }
+    return {
+      ...token,
+      maxApr,
+      apr,
+      rates: matchingRates
+    };
+  });
+}
+
 function App() {
   const [walletAddress, setWalletAddress] = useState(null);
   const [balance, setBalance] = useState(null);
@@ -51,20 +81,31 @@ function App() {
   const selectedNetwork = NETWORKS[currentNetworkId] || null;
 
 
+  // Fetch rates from /rates endpoint
+  const fetchRates = useCallback(async () => {
+    try {
+      const resp = await fetch('http://localhost:3000/rates');
+      if (!resp.ok) throw new Error('Failed to fetch rates');
+      const data = await resp.json();
+      setRates(data);
+      ratesFetchedRef.current = true;
+      return data;
+    } catch (err) {
+      setError('Error fetching rates: ' + err.message);
+      setRates([]);
+      ratesFetchedRef.current = false;
+      return [];
+    }
+  }, []);
+
   // Mock function to simulate fetching token data from blockchain
   const fetchBlockchainTokenData = useCallback(async (walletProvider, userAddress) => {
     if (!walletProvider || !userAddress) {
       setBlockchainTokens([]); // Clear tokens if no provider or address
-      return;
+      return [];
     }
     setError(''); // Clear previous errors related to fetching
     console.log("Fetching blockchain token data for address:", userAddress);
-    // Placeholder for actual blockchain fetching logic
-    // You would use walletProvider to interact with smart contracts or query balances
-    // For each token, you'd need its contract address and ABI (for ERC20 tokens)
-
-    // Example: Fetching ETH balance is already done in connectWallet,
-    // but you might want to represent ETH as a token in this list too.
 
     // Mock data for demonstration, including a unique 'address' for each token contract
     const fetchedTokens = [
@@ -87,23 +128,12 @@ function App() {
         suggestions: ['Native Staking Pool (Real)'],
         address: '0xYOUR_STAKETOKEN_CONTRACT_ADDRESS_HERE', // Replace with actual contract address
       },
-      // Add more token fetching logic here
-      // e.g., const tokenContract = new Contract(TOKEN_ADDRESS, TOKEN_ABI, walletProvider.getSigner());
-      // const userTokenBalance = await tokenContract.balanceOf(userAddress);
-      // const tokenName = await tokenContract.name();
-      // const tokenSymbol = await tokenContract.symbol();
     ];
 
     // Simulate fetching balances for ERC20 tokens (replace with actual calls)
     const updatedFetchedTokens = await Promise.all(fetchedTokens.map(async token => {
       if (token.isNative) return token; // ETH balance is already available via `balance` state
       try {
-        // Placeholder: Replace with actual balance fetching logic using token.address
-        // const signer = await walletProvider.getSigner();
-        // const contract = new Contract(token.address, ERC20_ABI, signer);
-        // const bal = await contract.balanceOf(userAddress);
-        // const decimals = await contract.decimals(); // You'll need decimals for correct formatting
-        // return { ...token, quantity: formatUnits(bal, decimals) };
         await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
         return { ...token, quantity: (Math.random() * 1000).toFixed(2) }; // Mock quantity
       } catch (fetchErr) {
@@ -114,7 +144,35 @@ function App() {
     }));
 
     setBlockchainTokens(updatedFetchedTokens);
-  }, [balance]); // Add balance as dependency, as it's used for ETH quantity
+    return updatedFetchedTokens;
+  }, [balance]);
+
+  // Fetch rates on startup (once)
+  useEffect(() => {
+    if (!ratesFetchedRef.current) {
+      fetchRates();
+    }
+  }, [fetchRates]);
+
+  // Reconcile tokens with rates whenever tokens or rates change
+  useEffect(() => {
+    let tokens = isTestDataMode ? mockTokens : blockchainTokens;
+    const reconciled = reconcileTokensWithRates(tokens, rates);
+    setReconciledTokens(reconciled);
+
+    // Highlight tokens whose symbol is in rates input_symbol
+    const inputSymbols = Array.isArray(rates)
+      ? rates.map(item => (item.input_symbol || '').toUpperCase()).filter(Boolean)
+      : [];
+    const tokenSymbols = tokens.map(token => (token.symbol || '').toUpperCase());
+    tokenSymbols.forEach(symbol => {
+      const found = inputSymbols.includes(symbol);
+      console.log(
+        `[Startup/Reconcile] Checking token symbol: "${symbol}" - ${found ? 'FOUND in /rates input_symbol' : 'NOT found in /rates input_symbol'}`
+      );
+    });
+    setHighlightedSymbols(inputSymbols);
+  }, [isTestDataMode, blockchainTokens, rates]);
 
   useEffect(() => {
     const handleChainChanged = async (_chainId) => {
@@ -130,7 +188,9 @@ function App() {
           try {
             const bal = await browserProvider.getBalance(walletAddress);
             setBalance(formatEther(bal));
-            fetchBlockchainTokenData(browserProvider, walletAddress);
+            // After getting balance, fetch tokens and reconcile
+            const tokens = await fetchBlockchainTokenData(browserProvider, walletAddress);
+            // Reconciliation will be triggered by blockchainTokens/rates effect
           } catch (e) {
             console.error("Error refreshing data on chain change:", e);
             setError("Error fetching data for the new network.");
@@ -161,7 +221,7 @@ function App() {
         window.ethereum.removeListener('chainChanged', handleChainChanged);
       }
     };
-  }, [walletAddress, fetchBlockchainTokenData]); // Effect dependencies
+  }, [walletAddress, fetchBlockchainTokenData]);
 
   const handleNetworkChange = async (targetNetworkId) => {
     const targetNetworkConfig = NETWORKS[targetNetworkId];
@@ -253,7 +313,8 @@ function App() {
 
       // If not in test data mode, fetch blockchain tokens after connecting
       if (!isTestDataMode) {
-        fetchBlockchainTokenData(browserProvider, userAddress);
+        await fetchBlockchainTokenData(browserProvider, userAddress);
+        // Reconciliation will be triggered by blockchainTokens/rates effect
       }
     } catch (err) {
       setError('Error connecting to MetaMask. Please check your wallet and try again.');
@@ -282,6 +343,24 @@ function App() {
     // setIsTestDataMode(true);
   };
 
+  // Handler for Compute button (now just re-highlights, since rates are already fetched)
+  const handleComputeRates = async () => {
+    // Optionally, could re-fetch rates here if you want to allow refresh
+    // For now, just re-highlight and log
+    const tokens = isTestDataMode ? mockTokens : blockchainTokens;
+    const inputSymbols = Array.isArray(rates)
+      ? rates.map(item => (item.input_symbol || '').toUpperCase()).filter(Boolean)
+      : [];
+    const tokenSymbols = tokens.map(token => (token.symbol || '').toUpperCase());
+    tokenSymbols.forEach(symbol => {
+      const found = inputSymbols.includes(symbol);
+      console.log(
+        `[Compute] Checking token symbol: "${symbol}" - ${found ? 'FOUND in /rates input_symbol' : 'NOT found in /rates input_symbol'}`
+      );
+    });
+    setHighlightedSymbols(inputSymbols);
+  };
+
   return (
     <div className="App">
       <Header
@@ -296,12 +375,14 @@ function App() {
         networks={NETWORKS}
         currentNetworkId={currentNetworkId}
         handleNetworkChange={handleNetworkChange}
+        onComputeRates={handleComputeRates}
       />
       <main className="App-content">
         <TokenTable
-          tokens={isTestDataMode ? mockTokens : blockchainTokens}
+          tokens={reconciledTokens}
           onOpenSuggestions={handleOpenSuggestionsModal}
           isLoading={!isTestDataMode && blockchainTokens.length === 0 && !!walletAddress && !error && !!selectedNetwork} // Show loading if in real mode, no tokens yet, wallet connected, no general error, and network is supported
+          highlightedSymbols={highlightedSymbols}
         />
       </main>
       {error && !isModalOpen && <p className="error-message">{error}</p>} {/* Hide app error if modal is open for better UX */}
