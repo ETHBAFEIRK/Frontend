@@ -275,11 +275,18 @@ const MermaidGraphModal = ({ rates }) => {
       if (!svg) return;
       const nodeElems = svg.querySelectorAll('g.node, g[class*="node"]');
       nodeElems.forEach((nodeElem) => {
+        // Try to extract nodeId from the id attribute, e.g. id="flowchart-STETH-1"
         let nodeId = null;
-        const titleElem = nodeElem.querySelector("title");
-        if (titleElem && titleElem.textContent) {
-          nodeId = titleElem.textContent.trim();
-        } else {
+        const idAttr = nodeElem.getAttribute("id");
+        if (idAttr && idAttr.startsWith("flowchart-")) {
+          // e.g. flowchart-STETH-1 or flowchart-MSTETH-2
+          const match = idAttr.match(/^flowchart-([A-Z0-9]+)-/);
+          if (match) {
+            nodeId = match[1];
+          }
+        }
+        // Fallback: try to get from <text> or <p>
+        if (!nodeId) {
           const textElem = nodeElem.querySelector("text");
           if (textElem && textElem.textContent) {
             nodeId = textElem.textContent.trim().split(" ")[0];
@@ -290,11 +297,11 @@ const MermaidGraphModal = ({ rates }) => {
           nodeElem.style.cursor = "pointer";
           nodeElem.onclick = (e) => {
             e.stopPropagation();
-            // Find the label text (with APY) for this node
+            // Try to get the label text (with APY) from <p> inside <span class="nodeLabel">
             let label = nodeId;
-            const textElem = nodeElem.querySelector("text");
-            if (textElem && textElem.textContent) {
-              label = textElem.textContent.trim();
+            const pElem = nodeElem.querySelector("span.nodeLabel p");
+            if (pElem && pElem.textContent) {
+              label = pElem.textContent.trim();
             }
             alert(`Node: ${nodeId}\nLabel: ${label}`);
           };
