@@ -7,10 +7,10 @@ import Modal from './components/Modal'; // New Modal component
 
 // Mock data for tokens - in a real app, this would come from an API or wallet
 const mockTokens = [
-  { id: '1', name: 'Ether', symbol: 'ETH', quantity: '2.5', apr: '4.5%', suggestions: ['Lido Staking', 'Rocket Pool Staking', 'EigenLayer Restaking'] },
-  { id: '2', name: 'CoolToken', symbol: 'CTK', quantity: '1500', apr: '8.0%', suggestions: ['Native Staking Pool A', 'Yield Farm X', 'Lend on Protocol Y'] },
-  { id: '3', name: 'StableCoin', symbol: 'USDC', quantity: '500', apr: null, suggestions: ['Aave Lending', 'Compound Lending', 'Curve Pool'] },
-  { id: '4', name: 'AnotherCoin', symbol: 'ANC', quantity: '250', apr: '6.2%', suggestions: ['Binance Earn', 'Kraken Staking'] },
+  { id: '1', name: 'Ether', symbol: 'ETH', quantity: '2.5', suggestions: ['Lido Staking', 'Rocket Pool Staking', 'EigenLayer Restaking'] },
+  { id: '2', name: 'CoolToken', symbol: 'CTK', quantity: '1500', suggestions: ['Native Staking Pool A', 'Yield Farm X', 'Lend on Protocol Y'] },
+  { id: '3', name: 'StableCoin', symbol: 'USDC', quantity: '500', suggestions: ['Aave Lending', 'Compound Lending', 'Curve Pool'] },
+  { id: '4', name: 'AnotherCoin', symbol: 'ANC', quantity: '250', suggestions: ['Binance Earn', 'Kraken Staking'] },
 ];
 
 const NETWORKS = {
@@ -91,12 +91,17 @@ function reconcileTokensWithRates(tokens, rates) {
   return tokens.map(token => {
     const symbol = (token.symbol || '').toUpperCase();
     const matchingRates = ratesBySymbol[symbol] || [];
-    // For APR, use direct match (first rate)
-    let apr = token.apr;
+    
+    let apr = 'N/A'; // Default Current APY to 'N/A'
     if (matchingRates.length > 0) {
-      const maxDirectApy = Math.max(...matchingRates.map(r => r.apy || 0));
-      apr = (maxDirectApy ? maxDirectApy.toFixed(2) + '%' : token.apr);
+      // Filter out rates without a valid 'apy' or where 'apy' is not a number
+      const validApys = matchingRates.map(r => r.apy).filter(apy => typeof apy === 'number' && !isNaN(apy));
+      if (validApys.length > 0) {
+        const maxDirectApy = Math.max(...validApys);
+        apr = maxDirectApy.toFixed(2) + '%';
+      }
     }
+
     // For MAX APR, use best reachable via graph
     const { maxApy } = findMaxApyPath(symbol);
     let maxApr = token.maxApr;
