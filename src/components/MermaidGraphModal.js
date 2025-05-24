@@ -242,7 +242,7 @@ const MermaidGraphModal = ({ rates }) => {
       style={{
         position: "fixed",
         top: 0, left: 0, right: 0, bottom: 0,
-        backgroundColor: "rgba(0,0,0,0.95)",
+        background: "rgba(246, 247, 251, 0.92)",
         zIndex: 2000,
         width: "100vw",
         height: "100vh",
@@ -257,19 +257,20 @@ const MermaidGraphModal = ({ rates }) => {
       <div
         className="modal-content"
         style={{
-          background: "none",
-          border: "none",
-          boxShadow: "none",
-          color: "#e0e0e0",
-          width: "90vw",
-          height: "90vh",
-          maxWidth: "90vw",
-          maxHeight: "90vh",
-          padding: 0,
+          background: "#fff",
+          border: "2.5px solid #e0e0e0",
+          boxShadow: "0 4px 32px 0 rgba(58, 130, 246, 0.07)",
+          color: "#232323",
+          width: "95vw",
+          height: "92vh",
+          maxWidth: "1100px",
+          maxHeight: "92vh",
+          padding: "2.5rem 2.2rem 2.2rem 2.2rem",
           margin: 0,
-          borderRadius: 0,
+          borderRadius: "24px",
           display: "flex",
-          flexDirection: "column"
+          flexDirection: "column",
+          position: "relative"
         }}
         onClick={e => e.stopPropagation()}
       >
@@ -277,20 +278,23 @@ const MermaidGraphModal = ({ rates }) => {
           className="modal-close-button"
           style={{
             position: "absolute",
-            top: 24,
-            right: 36,
+            top: 18,
+            right: 22,
             zIndex: 2100,
-            fontSize: "2.5rem",
-            color: "#00ffff",
+            fontSize: "2.1rem",
+            color: "#232323",
             background: "none",
             border: "none",
-            cursor: "pointer"
+            cursor: "pointer",
+            lineHeight: 1,
+            fontWeight: 700,
+            transition: "color 0.2s"
           }}
           onClick={() => setIsOpen(false)}
         >
           &times;
         </button>
-        <h2 style={{ color: "#00ffff", textAlign: "center", margin: "2rem 0 1rem 0", fontSize: "2.2rem" }}>
+        <h2 style={{ color: "#232323", textAlign: "center", margin: "2rem 0 1rem 0", fontSize: "2.2rem", fontWeight: 800, letterSpacing: "-1px" }}>
           {mode === 'default' && sourceSymbol
             ? `Restaking Paths from ${sourceSymbol}`
             : 'Full Restaking Graph'}
@@ -299,7 +303,7 @@ const MermaidGraphModal = ({ rates }) => {
           {mode === 'default' && (
             <button
               className="action-button"
-              style={{ background: "#222", color: "#00ffff", border: "1px solid #00ffff" }}
+              style={{ background: "linear-gradient(90deg, #6ad1e3 0%, #3b82f6 100%)", color: "#fff", border: "none" }}
               onClick={handleShowFull}
             >
               Show Full Graph
@@ -308,7 +312,7 @@ const MermaidGraphModal = ({ rates }) => {
           {mode === 'full' && sourceSymbol && (
             <button
               className="action-button"
-              style={{ background: "#222", color: "#00ffff", border: "1px solid #00ffff" }}
+              style={{ background: "linear-gradient(90deg, #6ad1e3 0%, #3b82f6 100%)", color: "#fff", border: "none" }}
               onClick={handleShowDefault}
             >
               Show Only Paths from {sourceSymbol}
@@ -321,13 +325,14 @@ const MermaidGraphModal = ({ rates }) => {
             margin: "0 auto",
             width: "98%",
             height: "80%",
-            background: "#181830",
+            background: "#f8f5ef",
             borderRadius: 12,
             padding: 16,
             overflow: "auto",
             display: "flex",
             alignItems: "center",
-            justifyContent: "center"
+            justifyContent: "center",
+            border: "1.5px solid #e0e0e0"
           }}
         >
           <div style={{ width: "100%", height: "100%" }}>
