@@ -173,7 +173,7 @@ const ERC20_ABI = [
         name: 'Ether (Real)',
         symbol: 'ETH',
         quantity: balance, // Already fetched ETH balance
-        apr: '4.2%',
+        // apr removed, will be sourced from backend
         suggestions: ['Lido Staking (Real)', 'Rocket Pool Staking (Real)'],
         address: '0x0000000000000000000000000000000000000000', // Native ETH
         isNative: true,
@@ -183,7 +183,7 @@ const ERC20_ABI = [
         name: 'Wrapped stETH',
         symbol: 'wstETH',
         quantity: '0',
-        apr: '5.0%',
+        // apr removed, will be sourced from backend
         suggestions: ['Lido Wrap', 'Restake via EigenLayer'],
         address: '0x6b8116B41bFd7e1A976cB892acB79926080A6Ca1',
       },
@@ -192,7 +192,7 @@ const ERC20_ABI = [
         name: 'Tether USD',
         symbol: 'USDT',
         quantity: '0',
-        apr: '3.5%',
+        // apr removed, will be sourced from backend
         suggestions: ['Lend on Aave', 'Provide liquidity on Curve'],
         address: '0xF2147b998141887Be7FA7834CCCD135e0067321a',
       },
@@ -201,7 +201,7 @@ const ERC20_ABI = [
         name: 'Wrapped Bitcoin',
         symbol: 'WBTC',
         quantity: '0',
-        apr: '2.8%',
+        // apr removed, will be sourced from backend
         suggestions: ['Stake on RenVM', 'Lend on Compound'],
         address: '0x29d1abD6A9d1d6961394dE0dBb85b4e89eC0E3f4',
       },
@@ -210,7 +210,7 @@ const ERC20_ABI = [
         name: 'DAI Stablecoin',
         symbol: 'DAI',
         quantity: '0',
-        apr: '4.1%',
+        // apr removed, will be sourced from backend
         suggestions: ['Lend on Aave', 'Farm on Curve'],
         address: '0xc4A8b48b1dB6584FB446Fc3BaE230dD3EF3C85DB',
       }
