@@ -2,6 +2,9 @@ import React from 'react';
 import './TokenTable.css';
 
 function TokenTable({tokens, onOpenSuggestions, isLoading, highlightedSymbols = []}) {
+    // Set this to false to hide coins without icons
+    const showWithoutIcons = false;
+
     if (isLoading) {
         return (
             <div className="token-table-container">
@@ -23,6 +26,18 @@ function TokenTable({tokens, onOpenSuggestions, isLoading, highlightedSymbols = 
     // Normalize highlightedSymbols to uppercase for comparison
     const highlightSet = new Set((highlightedSymbols || []).map(s => (s || '').toUpperCase()));
 
+    // Set of tokens with icons (should match backend and graph_tokens.py)
+    const tokenIcons = new Set([
+        "ETH", "WETH", "stETH", "wstETH", "ezETH", "pzETH", "STONE", "xPufETH", "mstETH", "weETH", "egETH",
+        "inwstETH", "rsETH", "LsETH", "USDC", "USDT", "USDe", "FBTC", "LBTC", "mBTC", "pumpBTC", "mswETH",
+        "mwBETH", "mETH", "rstETH", "steakLRT", "Re7LRT", "amphrETH", "rswETH", "swETH", "weETHs"
+    ]);
+
+    // Optionally filter tokens to only those with icons
+    const filteredTokens = showWithoutIcons
+        ? tokens
+        : tokens.filter(token => tokenIcons.has((token.symbol || '').toUpperCase()));
+
     return (
         <div className="token-table-container">
             <h2>Your Token Holdings</h2>
@@ -37,7 +52,7 @@ function TokenTable({tokens, onOpenSuggestions, isLoading, highlightedSymbols = 
                 </tr>
                 </thead>
                 <tbody>
-                {tokens.map((token) => {
+                {filteredTokens.map((token) => {
                     const isHighlighted = token.symbol && highlightSet.has(token.symbol.toUpperCase());
 
                     // Find the best matching rate for icon/link (prefer direct match, fallback to any rate)
