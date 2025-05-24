@@ -35,14 +35,14 @@ function App() {
       blockExplorerUrls: ['https://etherscan.io'] // Optional
     },
     zirquit: {
-      id: 'zirquit',
-      chainId: '0xYOUR_ZIRQUIT_CHAIN_ID', // <<< REPLACE with actual Zirquit hex chainId
-      name: 'Zirquit (Placeholder)',
-      currencyName: 'Zirquit Token', // <<< REPLACE
-      currencySymbol: 'ZQT', // <<< REPLACE
-      currencyDecimals: 18, // <<< REPLACE
-      rpcUrls: ['YOUR_ZIRQUIT_RPC_URL'], // <<< REPLACE with actual Zirquit RPC URL
-      blockExplorerUrls: ['YOUR_ZIRQUIT_EXPLORER_URL'] // <<< REPLACE (optional)
+      id: 'zircuit',
+      chainId: '0xBEE2', // 48898 в hex
+      name: 'Zircuit Garfield Testnet',
+      currencyName: 'Ether',
+      currencySymbol: 'ETH',
+      currencyDecimals: 18,
+      rpcUrls: ['https://rpc.zircuit.com'], // публичный RPC
+      blockExplorerUrls: ['https://explorer.zircuit.com'] // обозреватель блоков
     }
   };
   const INITIAL_NETWORK_ID = 'ethereum';
