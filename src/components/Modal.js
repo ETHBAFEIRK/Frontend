@@ -117,15 +117,17 @@ function Modal({ isOpen, onClose, token, rates }) {
   // Dynamically load mermaid for the full graph
   useEffect(() => {
     if (showGraph && graphCode && mermaidRef.current) {
-      if (typeof window !== "undefined" && typeof document !== "undefined") {
-        import('mermaid').then((mermaid) => {
-          mermaidRef.current.innerHTML = '';
-          mermaid.default.initialize({ startOnLoad: false, theme: "dark" });
-          mermaid.default.render('mermaid-graph', graphCode, (svgCode) => {
-            mermaidRef.current.innerHTML = svgCode;
-          });
-        });
-      }
+      // Use the actual DOM document, not undefined
+      const domDocument = mermaidRef.current.ownerDocument || window.document;
+      import('mermaid').then((mermaid) => {
+        mermaidRef.current.innerHTML = '';
+        mermaid.default.initialize({ startOnLoad: false, theme: "dark" });
+        // Use the domDocument to create a temporary element for rendering
+        const tempDiv = domDocument.createElement('div');
+        mermaid.default.render('mermaid-graph', graphCode, (svgCode) => {
+          mermaidRef.current.innerHTML = svgCode;
+        }, tempDiv);
+      });
     }
   }, [showGraph, graphCode]);
 
@@ -134,13 +136,15 @@ function Modal({ isOpen, onClose, token, rates }) {
     if (token && rates && tokenMermaidRef.current) {
       const code = buildTokenMermaidGraph(token, rates);
       setTokenGraphCode(code);
-      if (code && typeof window !== "undefined" && typeof document !== "undefined") {
+      if (code) {
+        const domDocument = tokenMermaidRef.current.ownerDocument || window.document;
         import('mermaid').then((mermaid) => {
           tokenMermaidRef.current.innerHTML = '';
           mermaid.default.initialize({ startOnLoad: false, theme: "dark" });
+          const tempDiv = domDocument.createElement('div');
           mermaid.default.render('token-mermaid-graph', code, (svgCode) => {
             tokenMermaidRef.current.innerHTML = svgCode;
-          });
+          }, tempDiv);
         });
       } else {
         tokenMermaidRef.current.innerHTML = '';
