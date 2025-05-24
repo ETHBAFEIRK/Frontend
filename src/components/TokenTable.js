@@ -130,14 +130,7 @@ function TokenTable({ tokens, onOpenSuggestions, isLoading, highlightedSymbols =
                     // Otherwise, show "Do it!" button
                     return (
                       <button
-                        onClick={(e) => {
-                          if (e && (e.altKey || e.metaKey)) {
-                            // Show mermaid modal for full graph
-                            window.dispatchEvent(new CustomEvent('show-mermaid-graph', { detail: { token } }));
-                          } else {
-                            onOpenSuggestions(token, e);
-                          }
-                        }}
+                        onClick={() => onOpenSuggestions(token)}
                         className="suggestions-button"
                       >
                         Do it!
