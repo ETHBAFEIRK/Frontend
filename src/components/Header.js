@@ -1,7 +1,7 @@
 import React from 'react';
 import './Header.css';
 
-function Header({ walletAddress, balance, connectWallet, setError, isTestDataMode, toggleTestDataMode }) {
+function Header({ walletAddress, connectWallet, disconnectWallet, setError, isTestDataMode, toggleTestDataMode }) {
   const handleConnectWallet = async () => {
     setError(''); // Clear error before attempting to connect
     await connectWallet();
@@ -32,9 +32,8 @@ function Header({ walletAddress, balance, connectWallet, setError, isTestDataMod
             Connect Wallet
           </button>
         ) : (
-          <div className="wallet-info">
-            <p>Address: {`${walletAddress.substring(0, 6)}...${walletAddress.substring(walletAddress.length - 4)}`}</p>
-            <p>Balance: {balance ? parseFloat(balance).toFixed(4) : '0.0000'} ETH</p>
+          <div className="wallet-info" onClick={disconnectWallet} title="Click to disconnect wallet">
+            <span>{`${walletAddress.substring(0, 6)}...${walletAddress.substring(walletAddress.length - 4)}`}</span>
           </div>
         )}
       </div>

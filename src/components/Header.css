@@ -52,12 +52,21 @@
 }
 
 .wallet-info {
-  text-align: right;
+  background-color: #00ffff; /* Accent color (Cyan) */
+  color: #101020; /* Dark text for contrast on cyan */
+  padding: 0.6rem 1rem;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+  font-size: 0.9rem;
+  white-space: nowrap;
 }
 
-.wallet-info p {
-  margin: 0.2rem 0;
-  font-size: 0.9rem;
+.wallet-info:hover {
+  background-color: #00e0e0; /* Slightly darker cyan on hover */
+  box-shadow: 0 0 5px #00ffff;
 }
 
 /* Toggle Switch Styles */

@@ -142,13 +142,24 @@ function App() {
     setSelectedTokenForModal(null);
   };
 
+  const disconnectWallet = () => {
+    setWalletAddress(null);
+    setBalance(null);
+    setProvider(null);
+    setBlockchainTokens([]);
+    setError(''); // Clear any errors
+    // Optionally, you could switch back to test data mode here if desired
+    // setIsTestDataMode(true);
+  };
+
   return (
     <div className="App">
       <Header
         walletAddress={walletAddress}
-        balance={balance}
+        // balance prop removed
         error={error}
         connectWallet={connectWallet}
+        disconnectWallet={disconnectWallet} // Pass disconnect function
         setError={setError}
         isTestDataMode={isTestDataMode}
         toggleTestDataMode={toggleTestDataMode}
