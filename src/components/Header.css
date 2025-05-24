@@ -24,17 +24,31 @@
   gap: 1.5rem;
 }
 
-.network-selector span {
+.network-selector select {
   padding: 0.5rem 1rem;
   border: 1px solid #4a4a70;
   border-radius: 4px;
   background-color: #2a2a4e; /* Darker background for selector */
+  color: #e0e0e0; /* Light grey text */
   cursor: pointer; /* Indicates it's interactive */
+  font-size: 0.9rem;
+  min-width: 150px; /* Give it some base width */
 }
 
-.network-selector span:hover {
+.network-selector select:hover {
   background-color: #3a3a5e;
 }
+
+.network-selector select:focus {
+  outline: none;
+  border-color: #00ffff; /* Cyan focus border */
+}
+
+.network-selector select option {
+  background-color: #2a2a4e;
+  color: #e0e0e0;
+}
+
 
 .connect-wallet-button {
   padding: 0.75rem 1.5rem;

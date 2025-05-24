@@ -22,6 +22,33 @@ function App() {
   const [isTestDataMode, setIsTestDataMode] = useState(true); // Default to test data mode
   const [blockchainTokens, setBlockchainTokens] = useState([]);
   const [provider, setProvider] = useState(null); // Store provider for reuse
+  
+  const NETWORKS = {
+    ethereum: {
+      id: 'ethereum', // Internal ID for React state
+      chainId: '0x1', // Hexadecimal chain ID
+      name: 'Ethereum Mainnet',
+      currencyName: 'Ether',
+      currencySymbol: 'ETH',
+      currencyDecimals: 18,
+      rpcUrls: [''], // Optional: MetaMask usually has its own default for common networks. For add, it's needed.
+      blockExplorerUrls: ['https://etherscan.io'] // Optional
+    },
+    zirquit: {
+      id: 'zirquit',
+      chainId: '0xYOUR_ZIRQUIT_CHAIN_ID', // <<< REPLACE with actual Zirquit hex chainId
+      name: 'Zirquit (Placeholder)',
+      currencyName: 'Zirquit Token', // <<< REPLACE
+      currencySymbol: 'ZQT', // <<< REPLACE
+      currencyDecimals: 18, // <<< REPLACE
+      rpcUrls: ['YOUR_ZIRQUIT_RPC_URL'], // <<< REPLACE with actual Zirquit RPC URL
+      blockExplorerUrls: ['YOUR_ZIRQUIT_EXPLORER_URL'] // <<< REPLACE (optional)
+    }
+  };
+  const INITIAL_NETWORK_ID = 'ethereum';
+  const [currentNetworkId, setCurrentNetworkId] = useState(INITIAL_NETWORK_ID);
+  const selectedNetwork = NETWORKS[currentNetworkId] || null;
+
 
   // Mock function to simulate fetching token data from blockchain
   const fetchBlockchainTokenData = useCallback(async (walletProvider, userAddress) => {
@@ -88,6 +115,105 @@ function App() {
     setBlockchainTokens(updatedFetchedTokens);
   }, [balance]); // Add balance as dependency, as it's used for ETH quantity
 
+  useEffect(() => {
+    const handleChainChanged = async (_chainId) => {
+      setError(''); // Clear previous network errors
+      const network = Object.values(NETWORKS).find(n => n.chainId === _chainId);
+      if (network) {
+        setCurrentNetworkId(network.id);
+        if (walletAddress && window.ethereum) {
+          const browserProvider = new BrowserProvider(window.ethereum);
+          setProvider(browserProvider);
+          try {
+            const bal = await browserProvider.getBalance(walletAddress);
+            setBalance(formatEther(bal));
+            fetchBlockchainTokenData(browserProvider, walletAddress);
+          } catch (e) {
+            console.error("Error refreshing data on chain change:", e);
+            setError("Error fetching data for the new network.");
+          }
+        }
+      } else {
+        setCurrentNetworkId(null); // Mark as unsupported
+        setError(`Connected to an unsupported network (${_chainId}). Please switch to a supported network.`);
+        // Clear wallet-specific data as it's for an unknown/unsupported network
+        setWalletAddress(null);
+        setBalance(null);
+        setProvider(null);
+        setBlockchainTokens([]);
+      }
+    };
+
+    if (window.ethereum) {
+      // Set initial network based on MetaMask's current chain
+      const currentChainId = window.ethereum.chainId;
+      if (currentChainId) {
+        handleChainChanged(currentChainId);
+      }
+      window.ethereum.on('chainChanged', handleChainChanged);
+    }
+
+    return () => {
+      if (window.ethereum) {
+        window.ethereum.removeListener('chainChanged', handleChainChanged);
+      }
+    };
+  }, [walletAddress, fetchBlockchainTokenData]); // Effect dependencies
+
+  const handleNetworkChange = async (targetNetworkId) => {
+    const targetNetworkConfig = NETWORKS[targetNetworkId];
+    if (!window.ethereum || !targetNetworkConfig) {
+      setError("Network configuration not found or MetaMask not available.");
+      return;
+    }
+
+    if (window.ethereum.chainId === targetNetworkConfig.chainId) {
+      // Already on the target network, ensure state is correct if it got out of sync
+      if (currentNetworkId !== targetNetworkConfig.id) {
+         setCurrentNetworkId(targetNetworkConfig.id);
+      }
+      return; // Already on the correct network
+    }
+
+    setError(''); // Clear previous errors
+    try {
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: targetNetworkConfig.chainId }],
+      });
+      // Success: chainChanged event will handle state updates
+    } catch (switchError) {
+      // This error code indicates that the chain has not been added to MetaMask.
+      if (switchError.code === 4902) {
+        try {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [
+              {
+                chainId: targetNetworkConfig.chainId,
+                chainName: targetNetworkConfig.name,
+                nativeCurrency: {
+                  name: targetNetworkConfig.currencyName,
+                  symbol: targetNetworkConfig.currencySymbol,
+                  decimals: targetNetworkConfig.currencyDecimals,
+                },
+                rpcUrls: targetNetworkConfig.rpcUrls,
+                blockExplorerUrls: targetNetworkConfig.blockExplorerUrls,
+              },
+            ],
+          });
+          // Success: chainChanged event will handle state updates
+        } catch (addError) {
+          console.error("Failed to add network:", addError);
+          setError(`Failed to add network "${targetNetworkConfig.name}". Please try adding it manually to MetaMask.`);
+        }
+      } else {
+        console.error("Failed to switch network:", switchError);
+        setError(`Failed to switch network to "${targetNetworkConfig.name}".`);
+      }
+    }
+  };
+
   const toggleTestDataMode = () => {
     setIsTestDataMode(prevMode => {
       const newMode = !prevMode;
@@ -148,7 +274,8 @@ function App() {
     setProvider(null);
     setBlockchainTokens([]);
     setError(''); // Clear any errors
-    // Optionally, you could switch back to test data mode here if desired
+    // Optionally, reset to initial network or test data mode
+    // setCurrentNetworkId(INITIAL_NETWORK_ID); // Or keep current network
     // setIsTestDataMode(true);
   };
 
@@ -163,15 +290,24 @@ function App() {
         setError={setError}
         isTestDataMode={isTestDataMode}
         toggleTestDataMode={toggleTestDataMode}
+        networks={NETWORKS}
+        currentNetworkId={currentNetworkId}
+        handleNetworkChange={handleNetworkChange}
       />
       <main className="App-content">
         <TokenTable
           tokens={isTestDataMode ? mockTokens : blockchainTokens}
           onOpenSuggestions={handleOpenSuggestionsModal}
-          isLoading={!isTestDataMode && blockchainTokens.length === 0 && !!walletAddress && !error} // Show loading if in real mode, no tokens yet, wallet connected, and no general error
+          isLoading={!isTestDataMode && blockchainTokens.length === 0 && !!walletAddress && !error && !!selectedNetwork} // Show loading if in real mode, no tokens yet, wallet connected, no general error, and network is supported
         />
       </main>
       {error && !isModalOpen && <p className="error-message">{error}</p>} {/* Hide app error if modal is open for better UX */}
+      {!selectedNetwork && walletAddress && ( // Show message if connected to an unsupported network
+        <p className="error-message">
+          The currently selected network in your wallet is not supported by this application.
+          Please switch to a supported network using the dropdown in the header.
+        </p>
+      )}
       {isModalOpen && selectedTokenForModal && (
         <Modal
           isOpen={isModalOpen}
