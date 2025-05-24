@@ -24,15 +24,15 @@ function App() {
   const [provider, setProvider] = useState(null); // Store provider for reuse
   
   const NETWORKS = {
-    ethereum: {
-      id: 'ethereum', // Internal ID for React state
-      chainId: '0x1', // Hexadecimal chain ID
-      name: 'Ethereum Mainnet',
-      currencyName: 'Ether',
-      currencySymbol: 'ETH',
-      currencyDecimals: 18,
-      rpcUrls: [''], // Optional: MetaMask usually has its own default for common networks. For add, it's needed.
-      blockExplorerUrls: ['https://etherscan.io'] // Optional
+    sepolia: { // Changed from ethereum to sepolia
+      id: 'sepolia', // Internal ID for React state
+      chainId: '0xaa36a7', // Sepolia chain ID (11155111)
+      name: 'Sepolia Testnet', // Updated name
+      currencyName: 'Sepolia Ether', // Standard name for Sepolia's native currency
+      currencySymbol: 'ETH', // Standard symbol
+      currencyDecimals: 18, // Standard decimals
+      rpcUrls: ['https://rpc.sepolia.org'], // Public Sepolia RPC
+      blockExplorerUrls: ['https://sepolia.etherscan.io'] // Sepolia Etherscan
     },
     zircuit: { // Changed key from 'zirquit' to 'zircuit' to match the id property
       id: 'zircuit',
@@ -45,7 +45,7 @@ function App() {
       blockExplorerUrls: ['https://explorer.zircuit.com'] // обозреватель блоков
     }
   };
-  const INITIAL_NETWORK_ID = 'ethereum';
+  const INITIAL_NETWORK_ID = 'sepolia'; // Updated initial network
   const [currentNetworkId, setCurrentNetworkId] = useState(INITIAL_NETWORK_ID);
   const selectedNetwork = NETWORKS[currentNetworkId] || null;
 
