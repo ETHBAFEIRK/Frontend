@@ -235,8 +235,12 @@ const MermaidGraphModal = ({ rates }) => {
         setSourceSymbol(token.symbol);
         setGraphCode(buildSubgraphFromSource(rates, token.symbol));
         setMode('default');
-        // Store the token object for use in dialog (for quantity)
-        setClickedNode(prev => ({ ...prev, _mainPageToken: token }));
+        // Store the token object for use in dialog (for quantity and available)
+        setClickedNode(prev => ({
+          ...prev,
+          _mainPageToken: token,
+          _availableAmount: token.quantity // Pass available amount for dialog
+        }));
       } else {
         setSourceSymbol(null);
         setGraphCode(buildMermaidGraph(rates));
@@ -406,13 +410,17 @@ const MermaidGraphModal = ({ rates }) => {
       setStakeDialog({
         open: true,
         incomingToken: clickedNode.incomingToken,
-        availableToStake: clickedNode.availableToStake,
+        // Prefer _availableAmount if present (from main page token), else fallback
+        availableToStake: clickedNode._availableAmount !== undefined
+          ? clickedNode._availableAmount
+          : clickedNode.availableToStake,
         stakedAmount: clickedNode.stakedAmount,
         apy: clickedNode.apy,
         kind: clickedNode.kind,
         link: clickedNode.link,
         verb: clickedNode.verb,
         amount: "",
+        _mainPageToken: clickedNode._mainPageToken,
       });
     } else {
       setStakeDialog((prev) => ({ ...prev, open: false }));
