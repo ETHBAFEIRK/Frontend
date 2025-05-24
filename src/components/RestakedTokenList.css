@@ -1,0 +1,17 @@
+.restaked-token-list-container {
+  padding: 1rem;
+  margin: 1rem;
+  background-color: #1e1e3f; /* Slightly different dark shade */
+  border-radius: 8px;
+  border: 1px solid #4a4a70;
+}
+
+.restaked-token-list-container h2 {
+  color: #00ffff; /* Cyan */
+  margin-top: 0;
+}
+
+.token-item-placeholder p {
+    margin: 0.5rem 0;
+    color: #c0c0c0; /* Lighter grey for content */
+}

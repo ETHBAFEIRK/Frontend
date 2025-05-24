@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 import { BrowserProvider, formatEther } from 'ethers';
+import './App.css';
+import Header from './components/Header';
+import TokenList from './components/TokenList';
+import RestakedTokenList from './components/RestakedTokenList';
 
 function App() {
   const [walletAddress, setWalletAddress] = useState(null);
@@ -7,6 +11,7 @@ function App() {
   const [error, setError] = useState('');
 
   const connectWallet = async () => {
+    setError(''); // Clear previous errors
     if (!window.ethereum) {
       setError('MetaMask is not installed. Please install it from metamask.io');
       return;
@@ -22,23 +27,25 @@ function App() {
       const balanceInEth = formatEther(balanceInWei);
       setBalance(balanceInEth);
     } catch (err) {
-      setError('Error connecting to MetaMask');
+      setError('Error connecting to MetaMask. Please check your wallet and try again.');
       console.error(err);
     }
   };
 
   return (
-    <div style={{ textAlign: 'center', padding: '2rem' }}>
-      <h1>ETH Wallet Checker</h1>
-      {!walletAddress ? (
-        <button onClick={connectWallet}>Connect MetaMask</button>
-      ) : (
-        <div>
-          <p>Wallet Address: {walletAddress}</p>
-          <p>ETH Balance: {balance}</p>
-        </div>
-      )}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+    <div className="App">
+      <Header
+        walletAddress={walletAddress}
+        balance={balance}
+        error={error}
+        connectWallet={connectWallet}
+        setError={setError}
+      />
+      <main className="App-content">
+        <TokenList />
+        <RestakedTokenList />
+      </main>
+      {error && <p className="error-message">{error}</p>}
     </div>
   );
 }
