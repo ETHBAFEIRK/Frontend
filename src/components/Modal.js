@@ -100,16 +100,26 @@ function Modal({ isOpen, onClose, token, rates }) {
   const [showGraph, setShowGraph] = useState(false);
   const [graphCode, setGraphCode] = useState('');
   const mermaidRef = useRef(null);
+  const [tokenGraphCode, setTokenGraphCode] = useState('');
+  const tokenMermaidRef = useRef(null);
 
-  // Dynamically load mermaid only if needed
+  // Helper: Build a graph only for the selected token as input
+  function buildTokenMermaidGraph(token, rates) {
+    if (!token || !rates || !Array.isArray(rates)) return '';
+    // Find all rates where input_symbol matches the token symbol
+    const symbol = token.symbol;
+    const filteredRates = rates.filter(r => (r.input_symbol || '').toUpperCase() === (symbol || '').toUpperCase());
+    if (filteredRates.length === 0) return '';
+    // Use the same graph builder, but only with filtered rates
+    return buildMermaidGraph(filteredRates);
+  }
+
+  // Dynamically load mermaid for the full graph
   useEffect(() => {
     if (showGraph && graphCode && mermaidRef.current) {
-      // Only render if running in a browser environment
       if (typeof window !== "undefined" && typeof document !== "undefined") {
         import('mermaid').then((mermaid) => {
-          // Clean up previous render
           mermaidRef.current.innerHTML = '';
-          // Render the graph
           mermaid.default.initialize({ startOnLoad: false, theme: "dark" });
           mermaid.default.render('mermaid-graph', graphCode, (svgCode) => {
             mermaidRef.current.innerHTML = svgCode;
@@ -118,6 +128,28 @@ function Modal({ isOpen, onClose, token, rates }) {
       }
     }
   }, [showGraph, graphCode]);
+
+  // Always render the token-specific graph if possible
+  useEffect(() => {
+    if (token && rates && tokenMermaidRef.current) {
+      const code = buildTokenMermaidGraph(token, rates);
+      setTokenGraphCode(code);
+      if (code && typeof window !== "undefined" && typeof document !== "undefined") {
+        import('mermaid').then((mermaid) => {
+          tokenMermaidRef.current.innerHTML = '';
+          mermaid.default.initialize({ startOnLoad: false, theme: "dark" });
+          mermaid.default.render('token-mermaid-graph', code, (svgCode) => {
+            tokenMermaidRef.current.innerHTML = svgCode;
+          });
+        });
+      } else {
+        tokenMermaidRef.current.innerHTML = '';
+      }
+    } else if (tokenMermaidRef.current) {
+      tokenMermaidRef.current.innerHTML = '';
+      setTokenGraphCode('');
+    }
+  }, [token, rates]);
 
   // Reset graph when modal closes
   useEffect(() => {
@@ -176,6 +208,16 @@ function Modal({ isOpen, onClose, token, rates }) {
             Show Full Graph (Alt/Cmd+Click)
           </button>
         </div>
+        {/* Always show the token-specific graph if available */}
+        {tokenGraphCode && (
+          <div style={{ marginTop: '2em', background: '#181830', borderRadius: 8, padding: 12, overflowX: 'auto' }}>
+            <div ref={tokenMermaidRef} />
+            <pre style={{ fontSize: 12, color: '#888', marginTop: 8, whiteSpace: 'pre-wrap' }}>
+              {tokenGraphCode}
+            </pre>
+          </div>
+        )}
+        {/* Show the full graph if requested */}
         {showGraph && (
           <div style={{ marginTop: '2em', background: '#181830', borderRadius: 8, padding: 12, overflowX: 'auto' }}>
             <div ref={mermaidRef} />
