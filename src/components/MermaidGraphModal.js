@@ -110,17 +110,19 @@ function buildSubgraphFromSource(rates, sourceSymbol) {
     const points = pointsByToken[node];
     if (apy !== undefined && node !== sourceSymbol.toUpperCase()) {
       if (points) {
-        label = `${node} (${apy.toFixed(2)}%)\\n${points}`;
+        label = `${node} (${apy.toFixed(2)}%)\n${points}`;
       } else {
         label = `${node} (${apy.toFixed(2)}%)`;
       }
     } else {
       if (points) {
-        label = `${node}\\n${points}`;
+        label = `${node}\n${points}`;
       } else {
         label = `${node}`;
       }
     }
+    // Over-escape newlines for Mermaid: replace \n with \\n
+    label = label.replace(/\n/g, '\\n');
     mermaid.push(`    ${node}["${label}"]`);
   }
   for (const { from, to, kind } of uniqueEdges) {
@@ -216,17 +218,19 @@ function buildMermaidGraph(rates) {
     if (target_apy[node]) {
       const apy_val = target_apy[node];
       if (points) {
-        label = `${node} (${apy_val.toFixed(2)}%)\\n${points}`;
+        label = `${node} (${apy_val.toFixed(2)}%)\n${points}`;
       } else {
         label = `${node} (${apy_val.toFixed(2)}%)`;
       }
     } else {
       if (points) {
-        label = `${node}\\n${points}`;
+        label = `${node}\n${points}`;
       } else {
         label = `${node}`;
       }
     }
+    // Over-escape newlines for Mermaid: replace \n with \\n
+    label = label.replace(/\n/g, '\\n');
     mermaid.push(`    ${node}["${label}"]`);
   }
   for (const [from_token, to_token, label] of pruned_edges) {
