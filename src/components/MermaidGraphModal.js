@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import Mermaid from './Mermaid';
 
-// Helper: Build a subgraph from a source token to all best-APY nodes
+/**
+ * Build a subgraph from a source token to only those end nodes
+ * where the APY is the maximum reachable from the source.
+ * Only the paths to these "max APY" end nodes are included.
+ */
 function buildSubgraphFromSource(rates, sourceSymbol) {
   if (!Array.isArray(rates) || !sourceSymbol) return '';
   // Build adjacency list and edge info
@@ -46,13 +50,21 @@ function buildSubgraphFromSource(rates, sourceSymbol) {
     }
   }
 
-  // Collect all best-APY nodes (those with bestApy set, except the source)
+  // Find the maximum APY among all reachable nodes (excluding the source)
   const bestNodes = Object.keys(bestApy).filter(n => n !== sourceSymbol.toUpperCase());
+  let maxApy = null;
+  for (const n of bestNodes) {
+    if (maxApy === null || bestApy[n] > maxApy) {
+      maxApy = bestApy[n];
+    }
+  }
+  // Only keep end nodes where apy == maxApy
+  const endNodes = bestNodes.filter(n => bestApy[n] === maxApy);
 
-  // For each best node, reconstruct the path from source
+  // For each end node, reconstruct the path from source
   const edges = [];
   const nodeSet = new Set([sourceSymbol.toUpperCase()]);
-  for (const node of bestNodes) {
+  for (const node of endNodes) {
     let curr = node;
     while (prev[curr]) {
       const from = prev[curr];
