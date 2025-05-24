@@ -7,12 +7,14 @@
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  background: rgba(255,255,255,0.82);
+  background: rgba(255,255,255,0.55); /* more transparent */
   box-shadow: 0 4px 32px 0 rgba(58, 130, 246, 0.07);
   border-bottom: 2.5px solid #e0e0e0;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
   min-height: 90px;
+  /* Let background show through */
+  pointer-events: auto;
 }
 
 .App-header {
