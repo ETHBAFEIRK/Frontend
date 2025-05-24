@@ -22,6 +22,7 @@ function App() {
   const [isTestDataMode, setIsTestDataMode] = useState(true); // Default to test data mode
   const [blockchainTokens, setBlockchainTokens] = useState([]);
   const [provider, setProvider] = useState(null); // Store provider for reuse
+  const [highlightedSymbols, setHighlightedSymbols] = useState([]); // For Compute highlighting
   
   const NETWORKS = {
     ethereum: {
@@ -279,6 +280,28 @@ function App() {
     // setIsTestDataMode(true);
   };
 
+  // Handler for Compute button (moved from Header to here)
+  const handleComputeRates = async () => {
+    setError('');
+    try {
+      const resp = await fetch('http://localhost:3000/rates');
+      if (!resp.ok) throw new Error('Failed to fetch rates');
+      const data = await resp.json();
+      console.log('Rates:', data);
+
+      // Highlight tokens whose symbol is in data.input_symbol
+      if (data && Array.isArray(data.input_symbol)) {
+        setHighlightedSymbols(data.input_symbol);
+      } else {
+        setHighlightedSymbols([]);
+      }
+    } catch (err) {
+      setError('Error fetching rates: ' + err.message);
+      setHighlightedSymbols([]);
+      console.error('Error fetching rates:', err);
+    }
+  };
+
   return (
     <div className="App">
       <Header
@@ -293,12 +316,14 @@ function App() {
         networks={NETWORKS}
         currentNetworkId={currentNetworkId}
         handleNetworkChange={handleNetworkChange}
+        onComputeRates={handleComputeRates}
       />
       <main className="App-content">
         <TokenTable
           tokens={isTestDataMode ? mockTokens : blockchainTokens}
           onOpenSuggestions={handleOpenSuggestionsModal}
           isLoading={!isTestDataMode && blockchainTokens.length === 0 && !!walletAddress && !error && !!selectedNetwork} // Show loading if in real mode, no tokens yet, wallet connected, no general error, and network is supported
+          highlightedSymbols={highlightedSymbols}
         />
       </main>
       {error && !isModalOpen && <p className="error-message">{error}</p>} {/* Hide app error if modal is open for better UX */}

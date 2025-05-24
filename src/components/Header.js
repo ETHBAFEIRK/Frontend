@@ -10,7 +10,8 @@ function Header({
   toggleTestDataMode,
   networks,
   currentNetworkId,
-  handleNetworkChange
+  handleNetworkChange,
+  onComputeRates
 }) {
   const handleConnectWallet = async () => {
     setError(''); // Clear error before attempting to connect
@@ -36,13 +37,8 @@ function Header({
           title="Compute best rates"
           onClick={async (e) => {
             e.stopPropagation();
-            try {
-              const resp = await fetch('http://localhost:3000/rates');
-              if (!resp.ok) throw new Error('Failed to fetch rates');
-              const data = await resp.json();
-              console.log('Rates:', data);
-            } catch (err) {
-              console.error('Error fetching rates:', err);
+            if (onComputeRates) {
+              await onComputeRates();
             }
           }}
         >
