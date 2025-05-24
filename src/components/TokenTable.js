@@ -90,19 +90,59 @@ function TokenTable({ tokens, onOpenSuggestions, isLoading, highlightedSymbols =
                 <td data-label="Current APY">{token.apr || 'N/A'}</td>
                 <td data-label="Max APY">{token.maxApr || 'N/A'}</td>
                 <td data-label="Action" style={{ verticalAlign: 'middle', textAlign: 'center', padding: '0.3rem 0.5rem' }}>
-                  <button
-                    onClick={(e) => {
-                      if (e && (e.altKey || e.metaKey)) {
-                        // Show mermaid modal for full graph
-                        window.dispatchEvent(new CustomEvent('show-mermaid-graph', { detail: { token } }));
-                      } else {
-                        onOpenSuggestions(token, e);
+                  {(() => {
+                    // Parse APY values as floats, fallback to NaN if not present
+                    const parseApy = (val) => {
+                      if (!val) return NaN;
+                      if (typeof val === "number") return val;
+                      if (typeof val === "string") {
+                        // Remove % and whitespace
+                        return parseFloat(val.replace('%', '').trim());
                       }
-                    }}
-                    className="suggestions-button"
-                  >
-                    How to do it?
-                  </button>
+                      return NaN;
+                    };
+                    const currentApy = parseApy(token.apr);
+                    const maxApy = parseApy(token.maxApr);
+
+                    // Show "Optimal" if maxApy < currentApy or maxApy is not a number
+                    if (isNaN(maxApy) || (!isNaN(currentApy) && maxApy < currentApy)) {
+                      return (
+                        <span
+                          style={{
+                            display: "inline-block",
+                            background: "#e6f0f7",
+                            color: "#3b82f6",
+                            borderRadius: "18px",
+                            fontWeight: 700,
+                            fontSize: "1.01rem",
+                            minWidth: "90px",
+                            minHeight: "38px",
+                            lineHeight: "38px",
+                            textAlign: "center",
+                            padding: "0 1.1rem"
+                          }}
+                        >
+                          Optimal
+                        </span>
+                      );
+                    }
+                    // Otherwise, show "Do it!" button
+                    return (
+                      <button
+                        onClick={(e) => {
+                          if (e && (e.altKey || e.metaKey)) {
+                            // Show mermaid modal for full graph
+                            window.dispatchEvent(new CustomEvent('show-mermaid-graph', { detail: { token } }));
+                          } else {
+                            onOpenSuggestions(token, e);
+                          }
+                        }}
+                        className="suggestions-button"
+                      >
+                        Do it!
+                      </button>
+                    );
+                  })()}
                 </td>
               </tr>
             );
