@@ -91,7 +91,14 @@ function TokenTable({ tokens, onOpenSuggestions, isLoading, highlightedSymbols =
                 <td data-label="Max APY">{token.maxApr || 'N/A'}</td>
                 <td data-label="Action">
                   <button
-                    onClick={() => onOpenSuggestions(token)}
+                    onClick={(e) => {
+                      if (e && (e.altKey || e.metaKey)) {
+                        // Show mermaid modal for full graph
+                        window.dispatchEvent(new CustomEvent('show-mermaid-graph', { detail: { token } }));
+                      } else {
+                        onOpenSuggestions(token, e);
+                      }
+                    }}
                     className="suggestions-button"
                   >
                     How to do it?
