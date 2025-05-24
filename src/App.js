@@ -9,9 +9,26 @@ import Modal from './components/Modal'; // New Modal component
 // Mock data for tokens - in a real app, this would come from an API or wallet
 const mockTokens = [
   { id: '1', name: 'Ether', symbol: 'ETH', quantity: '2.5', suggestions: ['Lido Staking', 'Rocket Pool Staking', 'EigenLayer Restaking'] },
-  { id: '2', name: 'CoolToken', symbol: 'CTK', quantity: '1500', suggestions: ['Native Staking Pool A', 'Yield Farm X', 'Lend on Protocol Y'] },
-  { id: '3', name: 'StableCoin', symbol: 'USDC', quantity: '500', suggestions: ['Aave Lending', 'Compound Lending', 'Curve Pool'] },
-  { id: '4', name: 'AnotherCoin', symbol: 'ANC', quantity: '250', suggestions: ['Binance Earn', 'Kraken Staking'] },
+  { id: '5', name: 'DAI Stablecoin', symbol: 'DAI', quantity: '0', suggestions: ['Aave Lending', 'MakerDAO Vault'] },
+  { id: '6', name: 'ETHx', symbol: 'ETHx', quantity: '0', suggestions: ['Restake via KelpDAO'] },
+  { id: '7', name: 'ezETH', symbol: 'EZETH', quantity: '0', suggestions: ['Stake via Renzo'] },
+  { id: '8', name: 'gmETH', symbol: 'GMETH', quantity: '0', suggestions: ['Bridge to GM Network'] },
+  { id: '9', name: 'inwstETH', symbol: 'INWSTETH', quantity: '0', suggestions: ['Restake via Inception'] },
+  { id: '10', name: 'mstETH', symbol: 'MSTETH', quantity: '0', suggestions: ['Stake via Eigenpie'] },
+  { id: '11', name: 'pzETH', symbol: 'PZETH', quantity: '0', suggestions: ['Stake via Renzo'] },
+  { id: '12', name: 'rsETH', symbol: 'RSETH', quantity: '0', suggestions: ['Restake via KelpDAO'] },
+  { id: '13', name: 'Stakestone', symbol: 'STONE', quantity: '0', suggestions: ['Stake via Stakestone'] },
+  { id: '14', name: 'stETH', symbol: 'STETH', quantity: '0', suggestions: ['Stake via Lido'] },
+  { id: '15', name: 'USD Coin (Bridged)', symbol: 'USDC.e', quantity: '0', suggestions: ['Aave Lending', 'DEX Swap'] },
+  { id: '16', name: 'Tether USD', symbol: 'USDT', quantity: '0', suggestions: ['Aave Lending', 'Stable Pool'] },
+  { id: '17', name: 'Wrapped BTC (Bridged)', symbol: 'WBTC.e', quantity: '0', suggestions: ['Curve BTC Pool'] },
+  { id: '18', name: 'Wrapped ETH', symbol: 'WETH', quantity: '0', suggestions: ['Uniswap LP', 'Restake'] },
+  { id: '19', name: 'Wrapped stETH', symbol: 'WSTETH', quantity: '0', suggestions: ['Restake via EigenLayer'] },
+  { id: '20', name: 'weETH', symbol: 'WEETH', quantity: '0', suggestions: ['Restake'] },
+  { id: '21', name: 'weETHs', symbol: 'WEETHS', quantity: '0', suggestions: ['Restake'] },
+  { id: '22', name: 'wetETH', symbol: 'WETETH', quantity: '0', suggestions: ['Restake'] },
+  { id: '23', name: 'xPufETH', symbol: 'XPUFETH', quantity: '0', suggestions: ['Restake via Puffer'] },
+  { id: '24', name: 'Zircuit Token', symbol: 'ZRC', quantity: '0', suggestions: ['Bridge or Swap'] },
 ];
 
 const NETWORKS = {
