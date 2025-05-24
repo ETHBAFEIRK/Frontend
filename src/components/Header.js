@@ -20,7 +20,7 @@ function Header({
 
   return (
     <header className="App-header">
-      <div className="logo">MyLogo</div>
+      <div className="logo" style={{ paddingLeft: "2.2rem" }}>Restaker X</div>
       <div className="header-spacer"></div>
       <div className="header-actions">
         <div className="toggle-switch-container">
