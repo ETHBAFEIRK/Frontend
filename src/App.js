@@ -38,8 +38,8 @@ function App() {
       id: 'zircuit',
       chainId: '0xBEE2', // 48898 в hex
       name: 'Zircuit Garfield Testnet',
-      currencyName: 'Ether',
-      currencySymbol: 'ETH',
+      currencyName: 'Garfield ETH', // More specific name
+      currencySymbol: 'GETH',      // More specific symbol to avoid MetaMask warning
       currencyDecimals: 18,
       rpcUrls: ['https://rpc.zircuit.com'], // публичный RPC
       blockExplorerUrls: ['https://explorer.zircuit.com'] // обозреватель блоков
