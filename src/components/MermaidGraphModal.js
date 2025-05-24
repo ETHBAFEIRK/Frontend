@@ -668,6 +668,52 @@ const MermaidGraphModal = ({ rates }) => {
                         verticalAlign: "middle"
                       }}></span>
                     </div>
+                    {/* --- Amount to stake input moved to top half, in terms of input token --- */}
+                    <div style={{ margin: "0.7rem 0 1.2rem 0", display: "flex", alignItems: "center" }}>
+                      <label style={{ fontWeight: 600, color: "#fff", marginRight: 8, fontSize: "1.1rem" }}>
+                        Amount to stake:
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        max={stakeDialog.availableToStake}
+                        step="any"
+                        value={stakeDialog.amount}
+                        onChange={e => setStakeDialog(sd => ({ ...sd, amount: e.target.value }))}
+                        placeholder={`0.0 ${stakeDialog.incomingToken}`}
+                        style={{
+                          width: 120,
+                          padding: "0.4em 0.8em",
+                          borderRadius: 8,
+                          border: "1.5px solid #3b82f6",
+                          fontSize: "1.1rem",
+                          fontWeight: 700,
+                          background: "#181a20",
+                          color: "#fff",
+                          marginLeft: 8
+                        }}
+                      />
+                      <button
+                        style={{
+                          marginLeft: 10,
+                          background: "#3b82f6",
+                          color: "#fff",
+                          border: "none",
+                          borderRadius: 8,
+                          fontWeight: 700,
+                          fontSize: "1.0rem",
+                          padding: "0.3em 1.1em",
+                          cursor: "pointer"
+                        }}
+                        onClick={() => setStakeDialog(sd => ({ ...sd, amount: stakeDialog.availableToStake }))}
+                        type="button"
+                      >
+                        MAX
+                      </button>
+                      <span style={{ marginLeft: 12, color: "#fff", fontWeight: 600, fontSize: "1.1rem" }}>
+                        {stakeDialog.incomingToken}
+                      </span>
+                    </div>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
                       <div style={{ fontWeight: 700, fontSize: "1.1rem", color: "#fff", opacity: 0.85 }}>
                         {/* (kept for layout) */}
@@ -729,48 +775,6 @@ const MermaidGraphModal = ({ rates }) => {
                     </div>
                     <div style={{ fontSize: "2.1rem", fontWeight: 800, color: "#fff", marginBottom: 8 }}>
                       0.0 {stakeDialog.stakedAmount}
-                    </div>
-                    <div style={{ margin: "1.2rem 0 0.7rem 0" }}>
-                      <label style={{ fontWeight: 600, color: "#fff", marginRight: 8 }}>
-                        Amount to {stakeDialog.verb}:
-                      </label>
-                      <input
-                        type="number"
-                        min="0"
-                        max={stakeDialog.availableToStake}
-                        step="any"
-                        value={stakeDialog.amount}
-                        onChange={e => setStakeDialog(sd => ({ ...sd, amount: e.target.value }))}
-                        placeholder={`0.0 ${stakeDialog.incomingToken}`}
-                        style={{
-                          width: 120,
-                          padding: "0.4em 0.8em",
-                          borderRadius: 8,
-                          border: "1.5px solid #3b82f6",
-                          fontSize: "1.1rem",
-                          fontWeight: 700,
-                          background: "#181a20",
-                          color: "#fff",
-                          marginLeft: 8
-                        }}
-                      />
-                      <button
-                        style={{
-                          marginLeft: 10,
-                          background: "#3b82f6",
-                          color: "#fff",
-                          border: "none",
-                          borderRadius: 8,
-                          fontWeight: 700,
-                          fontSize: "1.0rem",
-                          padding: "0.3em 1.1em",
-                          cursor: "pointer"
-                        }}
-                        onClick={() => setStakeDialog(sd => ({ ...sd, amount: stakeDialog.availableToStake }))}
-                        type="button"
-                      >
-                        MAX
-                      </button>
                     </div>
                     <div style={{
                       marginTop: 24,
