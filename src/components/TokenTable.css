@@ -79,3 +79,9 @@
     padding: 0.5rem;
   }
 }
+/* Highlighted token row for Compute results */
+.highlighted-token-row {
+  background-color: #fffbe6 !important;
+  color: #222 !important;
+  font-weight: bold;
+}
