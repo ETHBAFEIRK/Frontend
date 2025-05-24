@@ -19,8 +19,9 @@ function TokenTable({ tokens, onOpenSuggestions }) {
           <tr>
             <th>Token</th>
             <th>Quantity</th>
-            <th>APR</th>
-            <th>Actions</th>
+            <th>Current APR</th>
+            <th>Max APR</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -29,12 +30,13 @@ function TokenTable({ tokens, onOpenSuggestions }) {
               <td>{token.name} ({token.symbol})</td>
               <td>{token.quantity}</td>
               <td>{token.apr || 'N/A'}</td>
+              <td>{token.maxApr || 'N/A'}</td>
               <td>
                 <button
                   onClick={() => onOpenSuggestions(token)}
                   className="suggestions-button"
                 >
-                  Suggestions
+                  How to do it?
                 </button>
               </td>
             </tr>
