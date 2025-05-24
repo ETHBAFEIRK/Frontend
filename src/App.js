@@ -121,7 +121,10 @@ function App() {
   const [isTestDataMode, setIsTestDataMode] = useState(true); // Default to test data mode
   const [blockchainTokens, setBlockchainTokens] = useState([]);
   const [provider, setProvider] = useState(null); // Store provider for reuse
-  
+  const [highlightedSymbols, setHighlightedSymbols] = useState([]); // For Compute highlighting
+  const [rates, setRates] = useState([]);
+  const [reconciledTokens, setReconciledTokens] = useState([]);
+  const ratesFetchedRef = useRef(false);
   const INITIAL_NETWORK_ID = 'ethereum';
   const [currentNetworkId, setCurrentNetworkId] = useState(INITIAL_NETWORK_ID);
   const selectedNetwork = NETWORKS[currentNetworkId] || null;
