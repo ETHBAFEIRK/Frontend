@@ -1,6 +1,103 @@
 import React, { useState } from 'react';
 import Mermaid from './Mermaid';
 
+// Helper: Build a subgraph from a source token to all best-APY nodes
+function buildSubgraphFromSource(rates, sourceSymbol) {
+  if (!Array.isArray(rates) || !sourceSymbol) return '';
+  // Build adjacency list and edge info
+  const adj = {};
+  const edgeInfo = {};
+  const nodes = new Set();
+  for (const rate of rates) {
+    const from = (rate.input_symbol || '').toUpperCase();
+    const to = (rate.output_token || '').toUpperCase();
+    if (!from || !to) continue;
+    if (!adj[from]) adj[from] = [];
+    adj[from].push({ to, kind: rate.output_kind || '', apy: rate.apy });
+    nodes.add(from);
+    nodes.add(to);
+    edgeInfo[`${from}|${to}`] = edgeInfo[`${from}|${to}`] || [];
+    edgeInfo[`${from}|${to}`].push({ kind: rate.output_kind || '', apy: rate.apy });
+  }
+
+  // Find all best-APY nodes reachable from source
+  // We'll do BFS from source, and for each node, keep the best APY path to it
+  const bestApy = {};
+  const prev = {};
+  const bestKind = {};
+  const queue = [{ symbol: sourceSymbol.toUpperCase(), apy: 0 }];
+  bestApy[sourceSymbol.toUpperCase()] = 0;
+
+  while (queue.length > 0) {
+    const { symbol, apy } = queue.shift();
+    if (!adj[symbol]) continue;
+    for (const edge of adj[symbol]) {
+      const nextApy = edge.apy;
+      // If this path is better, update
+      if (
+        bestApy[edge.to] === undefined ||
+        nextApy > bestApy[edge.to]
+      ) {
+        bestApy[edge.to] = nextApy;
+        prev[edge.to] = symbol;
+        bestKind[`${symbol}|${edge.to}`] = edge.kind;
+        queue.push({ symbol: edge.to, apy: nextApy });
+      }
+    }
+  }
+
+  // Collect all best-APY nodes (those with bestApy set, except the source)
+  const bestNodes = Object.keys(bestApy).filter(n => n !== sourceSymbol.toUpperCase());
+
+  // For each best node, reconstruct the path from source
+  const edges = [];
+  const nodeSet = new Set([sourceSymbol.toUpperCase()]);
+  for (const node of bestNodes) {
+    let curr = node;
+    while (prev[curr]) {
+      const from = prev[curr];
+      const to = curr;
+      const kind = bestKind[`${from}|${to}`] || '';
+      edges.push({ from, to, kind });
+      nodeSet.add(from);
+      nodeSet.add(to);
+      curr = from;
+      if (curr === sourceSymbol.toUpperCase()) break;
+    }
+  }
+
+  // Remove duplicate edges
+  const uniqueEdges = [];
+  const seen = new Set();
+  for (const e of edges) {
+    const key = `${e.from}|${e.to}`;
+    if (!seen.has(key)) {
+      uniqueEdges.push(e);
+      seen.add(key);
+    }
+  }
+
+  // Build mermaid code
+  const mermaid = ['graph TD'];
+  for (const node of Array.from(nodeSet)) {
+    const apy = bestApy[node];
+    if (apy !== undefined && node !== sourceSymbol.toUpperCase()) {
+      mermaid.push(`    ${node}["${node} (${apy.toFixed(2)}%)"]`);
+    } else {
+      mermaid.push(`    ${node}["${node}"]`);
+    }
+  }
+  for (const { from, to, kind } of uniqueEdges) {
+    const label = kind ? kind.replace(/"/g, '\\"') : '';
+    if (label) {
+      mermaid.push(`    ${from} -->|${label}| ${to}`);
+    } else {
+      mermaid.push(`    ${from} --> ${to}`);
+    }
+  }
+  return mermaid.join('\n');
+}
+
 function buildMermaidGraph(rates) {
   if (!Array.isArray(rates)) return '';
   const token_icons = new Set([
@@ -91,15 +188,39 @@ function buildMermaidGraph(rates) {
 const MermaidGraphModal = ({ rates }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [graphCode, setGraphCode] = useState('');
+  const [mode, setMode] = useState('default'); // 'default' (subgraph) or 'full'
+  const [sourceSymbol, setSourceSymbol] = useState(null);
 
   React.useEffect(() => {
     const handler = (e) => {
-      setGraphCode(buildMermaidGraph(rates));
+      // If event.detail.token is present, use its symbol as source
+      const token = e.detail && e.detail.token;
+      if (token && token.symbol) {
+        setSourceSymbol(token.symbol);
+        setGraphCode(buildSubgraphFromSource(rates, token.symbol));
+        setMode('default');
+      } else {
+        setSourceSymbol(null);
+        setGraphCode(buildMermaidGraph(rates));
+        setMode('full');
+      }
       setIsOpen(true);
     };
     window.addEventListener('show-mermaid-graph', handler);
     return () => window.removeEventListener('show-mermaid-graph', handler);
   }, [rates]);
+
+  const handleShowFull = () => {
+    setGraphCode(buildMermaidGraph(rates));
+    setMode('full');
+  };
+
+  const handleShowDefault = () => {
+    if (sourceSymbol) {
+      setGraphCode(buildSubgraphFromSource(rates, sourceSymbol));
+      setMode('default');
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -158,8 +279,30 @@ const MermaidGraphModal = ({ rates }) => {
           &times;
         </button>
         <h2 style={{ color: "#00ffff", textAlign: "center", margin: "2rem 0 1rem 0", fontSize: "2.2rem" }}>
-          Full Restaking Graph
+          {mode === 'default' && sourceSymbol
+            ? `Restaking Paths from ${sourceSymbol}`
+            : 'Full Restaking Graph'}
         </h2>
+        <div style={{ display: "flex", justifyContent: "center", gap: 16, marginBottom: 8 }}>
+          {mode === 'default' && (
+            <button
+              className="action-button"
+              style={{ background: "#222", color: "#00ffff", border: "1px solid #00ffff" }}
+              onClick={handleShowFull}
+            >
+              Show Full Graph
+            </button>
+          )}
+          {mode === 'full' && sourceSymbol && (
+            <button
+              className="action-button"
+              style={{ background: "#222", color: "#00ffff", border: "1px solid #00ffff" }}
+              onClick={handleShowDefault}
+            >
+              Show Only Paths from {sourceSymbol}
+            </button>
+          )}
+        </div>
         <div
           style={{
             flex: 1,
