@@ -274,6 +274,21 @@ const MermaidGraphModal = ({ rates }) => {
       const svg = container.querySelector("svg");
       if (!svg) return;
       const nodeElems = svg.querySelectorAll('g.node, g[class*="node"]');
+      // --- Parse the subgraph for incoming nodes ---
+      // Only parse if in subgraph mode
+      let incomingMap = {};
+      if (mode === 'default' && graphCode) {
+        // Parse edges from the Mermaid code
+        // Look for lines like: FROM -->|label| TO or FROM --> TO
+        const edgeRegex = /^\s*([A-Z0-9_]+)\s*-->\|?.*?\|?\s*([A-Z0-9_]+)\s*$/gm;
+        let match;
+        while ((match = edgeRegex.exec(graphCode)) !== null) {
+          const from = match[1];
+          const to = match[2];
+          if (!incomingMap[to]) incomingMap[to] = [];
+          incomingMap[to].push(from);
+        }
+      }
       nodeElems.forEach((nodeElem) => {
         // Try to extract nodeId from the id attribute, e.g. id="flowchart-STETH-1"
         let nodeId = null;
@@ -303,13 +318,22 @@ const MermaidGraphModal = ({ rates }) => {
             if (pElem && pElem.textContent) {
               label = pElem.textContent.trim();
             }
-            alert(`Node: ${nodeId}\nLabel: ${label}`);
+            // Find incoming nodes (if in subgraph mode)
+            let incoming = [];
+            if (mode === 'default' && incomingMap[nodeId]) {
+              incoming = incomingMap[nodeId];
+            }
+            let incomingMsg = '';
+            if (incoming.length > 0) {
+              incomingMsg = `\nIncoming node(s): ${incoming.join(', ')}`;
+            }
+            alert(`Node: ${nodeId}\nLabel: ${label}${incomingMsg}`);
           };
         }
       });
     }, 300);
     return () => clearTimeout(timeout);
-  }, [graphCode, isOpen]);
+  }, [graphCode, isOpen, mode]);
 
   if (!isOpen) return null;
 
