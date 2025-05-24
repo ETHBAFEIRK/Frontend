@@ -104,14 +104,80 @@ const MermaidGraphModal = ({ rates }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay" onClick={() => setIsOpen(false)}>
-      <div className="modal-content" onClick={e => e.stopPropagation()}>
-        <button className="modal-close-button" onClick={() => setIsOpen(false)}>
+    <div
+      className="modal-overlay"
+      style={{
+        position: "fixed",
+        top: 0, left: 0, right: 0, bottom: 0,
+        backgroundColor: "rgba(0,0,0,0.95)",
+        zIndex: 2000,
+        width: "100vw",
+        height: "100vh",
+        display: "flex",
+        alignItems: "stretch",
+        justifyContent: "stretch",
+        padding: 0,
+        margin: 0
+      }}
+      onClick={() => setIsOpen(false)}
+    >
+      <div
+        className="modal-content"
+        style={{
+          background: "none",
+          border: "none",
+          boxShadow: "none",
+          color: "#e0e0e0",
+          width: "100vw",
+          height: "100vh",
+          maxWidth: "100vw",
+          maxHeight: "100vh",
+          padding: 0,
+          margin: 0,
+          borderRadius: 0,
+          display: "flex",
+          flexDirection: "column"
+        }}
+        onClick={e => e.stopPropagation()}
+      >
+        <button
+          className="modal-close-button"
+          style={{
+            position: "absolute",
+            top: 24,
+            right: 36,
+            zIndex: 2100,
+            fontSize: "2.5rem",
+            color: "#00ffff",
+            background: "none",
+            border: "none",
+            cursor: "pointer"
+          }}
+          onClick={() => setIsOpen(false)}
+        >
           &times;
         </button>
-        <h2>Full Restaking Graph</h2>
-        <div style={{ marginTop: '2em', background: '#181830', borderRadius: 8, padding: 12, overflowX: 'auto' }}>
-          <Mermaid chart={graphCode} id="mermaid-graph-modal" />
+        <h2 style={{ color: "#00ffff", textAlign: "center", margin: "2rem 0 1rem 0", fontSize: "2.2rem" }}>
+          Full Restaking Graph
+        </h2>
+        <div
+          style={{
+            flex: 1,
+            margin: "0 auto",
+            width: "98vw",
+            height: "80vh",
+            background: "#181830",
+            borderRadius: 12,
+            padding: 16,
+            overflow: "auto",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
+          }}
+        >
+          <div style={{ width: "100%", height: "100%" }}>
+            <Mermaid chart={graphCode} id="mermaid-graph-modal" />
+          </div>
         </div>
       </div>
     </div>
