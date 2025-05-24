@@ -177,3 +177,62 @@ input:focus + .slider {
 input:checked + .slider:before {
   transform: translateX(22px);
 }
+
+/* Responsive Header Adjustments */
+@media (max-width: 768px) {
+  .App-header {
+    flex-direction: column;
+    align-items: center; /* Center items when stacked */
+    padding: 1.5rem 0;
+  }
+
+  .logo {
+    margin-right: 0; /* Remove right margin when stacked */
+    margin-bottom: 1rem; /* Add bottom margin when stacked */
+    padding-left: 0; /* Adjust padding if needed */
+    text-align: center;
+  }
+
+  .header-actions {
+    flex-direction: column; /* Stack action items */
+    gap: 1rem; /* Adjust gap for stacked items */
+    width: 100%; /* Make actions take full width */
+    padding: 0 1rem; /* Add some horizontal padding */
+  }
+
+  .network-selector select {
+    min-width: auto; /* Allow select to shrink */
+    width: 100%; /* Make select full width */
+    font-size: 1rem;
+  }
+
+  .connect-wallet-button {
+    width: 100%; /* Make button full width */
+    margin-right: 0; /* Remove right margin */
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+  }
+
+  .wallet-info {
+    width: 100%; /* Make wallet info full width */
+    text-align: center; /* Center text in wallet info */
+    font-size: 1rem;
+    padding: 0.6rem 1rem;
+  }
+
+  .toggle-switch-container {
+    justify-content: center; /* Center toggle switch */
+    width: 100%;
+    margin-right: 0;
+    margin-top: 0.5rem; /* Add some space above toggle */
+  }
+}
+
+@media (max-width: 480px) {
+  .logo {
+    font-size: 2rem;
+  }
+  .toggle-label {
+    font-size: 0.95rem;
+  }
+}
