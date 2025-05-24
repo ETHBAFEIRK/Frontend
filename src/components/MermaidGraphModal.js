@@ -601,6 +601,19 @@ const MermaidGraphModal = ({ rates }) => {
           }}
         >
           <div style={{ width: "100%", height: "100%" }} ref={mermaidContainerRef}>
+            {/* Show a message if there are no paths in the subgraph */}
+            {mode === 'default' && sourceSymbol && graphCode && graphCode.trim().split('\n').length <= 2 && (
+              <div style={{
+                width: "100%",
+                textAlign: "center",
+                color: "#b94a48",
+                fontWeight: 700,
+                fontSize: "1.25rem",
+                padding: "2.5rem 0"
+              }}>
+                No restaking paths available from {sourceSymbol}.
+              </div>
+            )}
             <Mermaid chart={graphCode} id="mermaid-graph-modal" />
             {stakeDialog.open && (
               <div
