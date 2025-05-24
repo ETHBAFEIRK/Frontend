@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Mermaid from './Mermaid';
 
 /**
@@ -202,10 +202,15 @@ const MermaidGraphModal = ({ rates }) => {
   const [graphCode, setGraphCode] = useState('');
   const [mode, setMode] = useState('default'); // 'default' (subgraph) or 'full'
   const [sourceSymbol, setSourceSymbol] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [clickedNode, setClickedNode] = useState(null);
+  const mermaidContainerRef = useRef(null);
 
   // Handler to close modal
   const handleClose = useCallback(() => {
     setIsOpen(false);
+    setDialogOpen(false);
+    setClickedNode(null);
   }, []);
 
   // Escape key handler
@@ -214,6 +219,8 @@ const MermaidGraphModal = ({ rates }) => {
     const onKeyDown = (e) => {
       if (e.key === "Escape") {
         setIsOpen(false);
+        setDialogOpen(false);
+        setClickedNode(null);
       }
     };
     window.addEventListener("keydown", onKeyDown);
@@ -234,6 +241,8 @@ const MermaidGraphModal = ({ rates }) => {
         setMode('full');
       }
       setIsOpen(true);
+      setDialogOpen(false);
+      setClickedNode(null);
     };
     window.addEventListener('show-mermaid-graph', handler);
     return () => window.removeEventListener('show-mermaid-graph', handler);
@@ -242,14 +251,58 @@ const MermaidGraphModal = ({ rates }) => {
   const handleShowFull = () => {
     setGraphCode(buildMermaidGraph(rates));
     setMode('full');
+    setDialogOpen(false);
+    setClickedNode(null);
   };
 
   const handleShowDefault = () => {
     if (sourceSymbol) {
       setGraphCode(buildSubgraphFromSource(rates, sourceSymbol));
       setMode('default');
+      setDialogOpen(false);
+      setClickedNode(null);
     }
   };
+
+  // Add click handlers to mermaid nodes after render
+  useEffect(() => {
+    if (!isOpen) return;
+    // Wait for Mermaid to render
+    const timeout = setTimeout(() => {
+      const container = document.getElementById("mermaid-graph-modal");
+      if (!container) return;
+      // Mermaid renders nodes as <g> or <div> with class "node" or "nodes"
+      // We'll try to attach to SVG nodes with class "node"
+      const svg = container.querySelector("svg");
+      if (!svg) return;
+      // Try both v10 and v9+ Mermaid node selectors
+      const nodeElems = svg.querySelectorAll('g.node, g[class*="node"]');
+      nodeElems.forEach((nodeElem) => {
+        // Find the <title> or <text> child to get the node id
+        let nodeId = null;
+        // Try to get node id from <title>
+        const titleElem = nodeElem.querySelector("title");
+        if (titleElem && titleElem.textContent) {
+          nodeId = titleElem.textContent.trim();
+        } else {
+          // Try to get from <text>
+          const textElem = nodeElem.querySelector("text");
+          if (textElem && textElem.textContent) {
+            nodeId = textElem.textContent.trim().split(" ")[0];
+          }
+        }
+        if (nodeId) {
+          nodeElem.style.cursor = "pointer";
+          nodeElem.onclick = (e) => {
+            e.stopPropagation();
+            setClickedNode(nodeId);
+            setDialogOpen(true);
+          };
+        }
+      });
+    }, 300); // Wait a bit for Mermaid to render
+    return () => clearTimeout(timeout);
+  }, [graphCode, isOpen]);
 
   if (!isOpen) return null;
 
@@ -424,8 +477,67 @@ const MermaidGraphModal = ({ rates }) => {
             border: "1.5px solid #e0e0e0"
           }}
         >
-          <div style={{ width: "100%", height: "100%" }}>
+          <div style={{ width: "100%", height: "100%" }} ref={mermaidContainerRef}>
             <Mermaid chart={graphCode} id="mermaid-graph-modal" />
+            {dialogOpen && clickedNode && (
+              <div
+                style={{
+                  position: "fixed",
+                  left: 0,
+                  top: 0,
+                  width: "100vw",
+                  height: "100vh",
+                  zIndex: 3000,
+                  background: "rgba(0,0,0,0.18)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center"
+                }}
+                onClick={() => { setDialogOpen(false); setClickedNode(null); }}
+              >
+                <div
+                  style={{
+                    background: "#fff",
+                    border: "2px solid #3b82f6",
+                    borderRadius: 18,
+                    padding: "2.2rem 2.5rem",
+                    minWidth: 320,
+                    minHeight: 120,
+                    boxShadow: "0 4px 32px 0 rgba(58, 130, 246, 0.13)",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    position: "relative"
+                  }}
+                  onClick={e => e.stopPropagation()}
+                >
+                  <button
+                    style={{
+                      position: "absolute",
+                      top: 12,
+                      right: 18,
+                      background: "none",
+                      border: "none",
+                      color: "#232323",
+                      fontSize: "1.7rem",
+                      cursor: "pointer",
+                      fontWeight: 700
+                    }}
+                    onClick={() => { setDialogOpen(false); setClickedNode(null); }}
+                    aria-label="Close"
+                  >
+                    &times;
+                  </button>
+                  <h3 style={{ margin: "0 0 1.2rem 0", color: "#3b82f6", fontWeight: 800 }}>
+                    {clickedNode}
+                  </h3>
+                  <div style={{ fontSize: "1.15rem", color: "#232323", textAlign: "center" }}>
+                    In the restaking path
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
