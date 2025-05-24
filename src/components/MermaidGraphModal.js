@@ -299,23 +299,55 @@ const MermaidGraphModal = ({ rates }) => {
             ? `Restaking Paths from ${sourceSymbol}`
             : 'Full Restaking Graph'}
         </h2>
-        <div style={{ display: "flex", justifyContent: "center", gap: 16, marginBottom: 8 }}>
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginBottom: 8 }}>
           {mode === 'default' && (
             <button
-              className="action-button"
-              style={{ background: "linear-gradient(90deg, #6ad1e3 0%, #3b82f6 100%)", color: "#fff", border: "none" }}
+              className="side-action-button"
+              style={{
+                background: "#f8f5ef",
+                color: "#3b82f6",
+                border: "1.5px solid #3b82f6",
+                borderRadius: "16px",
+                fontWeight: 600,
+                fontSize: "0.98rem",
+                padding: "0.35rem 1.1rem",
+                minWidth: "auto",
+                minHeight: "auto",
+                boxShadow: "none",
+                marginRight: 0,
+                marginLeft: 0,
+                cursor: "pointer",
+                transition: "background 0.18s, color 0.18s, border 0.18s"
+              }}
               onClick={handleShowFull}
+              title="Show the full restaking graph"
             >
-              Show Full Graph
+              Show full graph
             </button>
           )}
           {mode === 'full' && sourceSymbol && (
             <button
-              className="action-button"
-              style={{ background: "linear-gradient(90deg, #6ad1e3 0%, #3b82f6 100%)", color: "#fff", border: "none" }}
+              className="side-action-button"
+              style={{
+                background: "#f8f5ef",
+                color: "#3b82f6",
+                border: "1.5px solid #3b82f6",
+                borderRadius: "16px",
+                fontWeight: 600,
+                fontSize: "0.98rem",
+                padding: "0.35rem 1.1rem",
+                minWidth: "auto",
+                minHeight: "auto",
+                boxShadow: "none",
+                marginRight: 0,
+                marginLeft: 0,
+                cursor: "pointer",
+                transition: "background 0.18s, color 0.18s, border 0.18s"
+              }}
               onClick={handleShowDefault}
+              title={`Show only paths from ${sourceSymbol}`}
             >
-              Show Only Paths from {sourceSymbol}
+              Show only paths from {sourceSymbol}
             </button>
           )}
         </div>
