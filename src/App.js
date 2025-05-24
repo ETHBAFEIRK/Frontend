@@ -34,7 +34,7 @@ function App() {
       rpcUrls: [''], // Optional: MetaMask usually has its own default for common networks. For add, it's needed.
       blockExplorerUrls: ['https://etherscan.io'] // Optional
     },
-    zirquit: {
+    zircuit: { // Changed key from 'zirquit' to 'zircuit' to match the id property
       id: 'zircuit',
       chainId: '0xBEE2', // 48898 в hex
       name: 'Zircuit Garfield Testnet',
