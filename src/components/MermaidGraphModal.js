@@ -235,6 +235,8 @@ const MermaidGraphModal = ({ rates }) => {
         setSourceSymbol(token.symbol);
         setGraphCode(buildSubgraphFromSource(rates, token.symbol));
         setMode('default');
+        // Store the token object for use in dialog (for quantity)
+        setClickedNode(prev => ({ ...prev, _mainPageToken: token }));
       } else {
         setSourceSymbol(null);
         setGraphCode(buildMermaidGraph(rates));
@@ -242,7 +244,7 @@ const MermaidGraphModal = ({ rates }) => {
       }
       setIsOpen(true);
       setDialogOpen(false);
-      setClickedNode(null);
+      // Don't clear clickedNode here, so we can keep _mainPageToken if present
     };
     window.addEventListener('show-mermaid-graph', handler);
     return () => window.removeEventListener('show-mermaid-graph', handler);
@@ -366,7 +368,7 @@ const MermaidGraphModal = ({ rates }) => {
               // State for input amount
               // Move React state to the component level, not inside callback
               setDialogOpen(true);
-              setClickedNode({
+              setClickedNode(prev => ({
                 incomingToken,
                 availableToStake,
                 stakedAmount: nodeId,
@@ -374,7 +376,9 @@ const MermaidGraphModal = ({ rates }) => {
                 kind,
                 link,
                 verb,
-              });
+                // Pass through the main page token quantity if available
+                _mainPageToken: prev && prev._mainPageToken ? prev._mainPageToken : undefined,
+              }));
             }
           };
         }
@@ -643,18 +647,30 @@ const MermaidGraphModal = ({ rates }) => {
                   </button>
                   {/* --- Stake Dialog Content --- */}
                   <div style={{ width: 420, maxWidth: "90vw" }}>
+                    <div style={{ fontWeight: 800, fontSize: "1.25rem", color: "#fff", marginBottom: 18 }}>
+                      {/* Show token quantity in the dialog title if available */}
+                      {stakeDialog._mainPageToken && stakeDialog._mainPageToken.quantity !== undefined ? (
+                        <>
+                          {stakeDialog._mainPageToken.quantity} {stakeDialog._mainPageToken.symbol} available
+                        </>
+                      ) : (
+                        <>
+                          Available to {stakeDialog.verb}
+                        </>
+                      )}
+                      <span style={{
+                        display: "inline-block",
+                        width: 8,
+                        height: 8,
+                        background: "#4ade80",
+                        borderRadius: "50%",
+                        marginLeft: 8,
+                        verticalAlign: "middle"
+                      }}></span>
+                    </div>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
                       <div style={{ fontWeight: 700, fontSize: "1.1rem", color: "#fff", opacity: 0.85 }}>
-                        Available to {stakeDialog.verb}
-                        <span style={{
-                          display: "inline-block",
-                          width: 8,
-                          height: 8,
-                          background: "#4ade80",
-                          borderRadius: "50%",
-                          marginLeft: 8,
-                          verticalAlign: "middle"
-                        }}></span>
+                        {/* (kept for layout) */}
                       </div>
                       {stakeDialog.link && (
                         <a href={stakeDialog.link} target="_blank" rel="noopener noreferrer"

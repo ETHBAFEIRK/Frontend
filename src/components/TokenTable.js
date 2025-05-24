@@ -132,8 +132,8 @@ function TokenTable({tokens, onOpenSuggestions, isLoading, highlightedSymbols = 
                                         <button
                                             onClick={(e) => {
                                                 if (!(e && (e.altKey || e.metaKey))) {
-                                                    // Show mermaid modal for full graph
-                                                    window.dispatchEvent(new CustomEvent('show-mermaid-graph', {detail: {token}}));
+                                                    // Show mermaid modal for full graph, pass quantity for dialog
+                                                    window.dispatchEvent(new CustomEvent('show-mermaid-graph', {detail: {token: {...token}}}));
                                                 } else {
                                                     onOpenSuggestions(token, e);
                                                 }
