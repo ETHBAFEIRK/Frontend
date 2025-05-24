@@ -424,9 +424,10 @@ const ERC20_ABI = [
     }
   };
 
-  const handleOpenSuggestionsModal = (token) => {
+  const handleOpenSuggestionsModal = (token, e) => {
     setSelectedTokenForModal(token);
     setIsModalOpen(true);
+    // If alt/cmd-click, let Modal handle the graph rendering
   };
 
   const handleCloseModal = () => {
@@ -499,6 +500,7 @@ const ERC20_ABI = [
           isOpen={isModalOpen}
           onClose={handleCloseModal}
           token={selectedTokenForModal}
+          rates={rates}
         />
       )}
     </div>

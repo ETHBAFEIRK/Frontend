@@ -91,7 +91,7 @@ function TokenTable({ tokens, onOpenSuggestions, isLoading, highlightedSymbols =
                 <td data-label="Max APY">{token.maxApr || 'N/A'}</td>
                 <td data-label="Action">
                   <button
-                    onClick={() => onOpenSuggestions(token)}
+                    onClick={(e) => onOpenSuggestions(token, e)}
                     className="suggestions-button"
                   >
                     How to do it?
