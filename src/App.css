@@ -4,7 +4,7 @@ body {
   font-family: 'Inter', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: url('/bg.jpg') center center/cover no-repeat fixed, linear-gradient(180deg, #f8f5ef 0%, #e6f0f7 100%);
+  background: url('bg.jpg') center center/cover no-repeat fixed, linear-gradient(180deg, #f8f5ef 0%, #e6f0f7 100%);
   color: #232323;
   min-height: 100vh;
   background-repeat: no-repeat;
