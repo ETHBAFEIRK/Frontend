@@ -77,7 +77,7 @@ function buildMermaidGraph(rates) {
   }
 
   // Only keep nodes that are in pruned_edges
-  const mermaid = ["graph TD"];
+  const mermaid = ["graph LR"];
   for (const node of Array.from(pruned_nodes).sort()) {
     if (target_apy[node]) {
       const apy_val = target_apy[node];

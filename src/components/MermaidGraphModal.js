@@ -96,7 +96,7 @@ function buildSubgraphFromSource(rates, sourceSymbol) {
   }
 
   // Build mermaid code
-  const mermaid = ['graph TD'];
+  const mermaid = ['graph LR'];
   for (const node of Array.from(nodeSet)) {
     const apy = bestApy[node];
     if (apy !== undefined && node !== sourceSymbol.toUpperCase()) {
@@ -184,7 +184,7 @@ function buildMermaidGraph(rates) {
     pruned_edges.push([from_token, to_token, label]);
   }
 
-  const mermaid = ["graph TD"];
+  const mermaid = ["graph LR"];
   for (const node of Array.from(pruned_nodes).sort()) {
     if (target_apy[node]) {
       const apy_val = target_apy[node];
