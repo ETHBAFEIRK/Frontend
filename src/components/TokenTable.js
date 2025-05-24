@@ -89,7 +89,7 @@ function TokenTable({ tokens, onOpenSuggestions, isLoading, highlightedSymbols =
                 <td data-label="Quantity">{token.quantity}</td>
                 <td data-label="Current APY">{token.apr || 'N/A'}</td>
                 <td data-label="Max APY">{token.maxApr || 'N/A'}</td>
-                <td data-label="Action">
+                <td data-label="Action" style={{ verticalAlign: 'middle', textAlign: 'center', padding: '0.3rem 0.5rem' }}>
                   <button
                     onClick={(e) => {
                       if (e && (e.altKey || e.metaKey)) {
