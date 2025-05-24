@@ -550,29 +550,6 @@ const MermaidGraphModal = ({ rates, tokens }) => {
               Show only paths from {sourceSymbol}
             </button>
           )}
-          <button
-            className="side-action-button"
-            style={{
-              background: "#fff",
-              color: "#232323",
-              border: "1.5px solid #e0e0e0",
-              borderRadius: "16px",
-              fontWeight: 600,
-              fontSize: "0.98rem",
-              padding: "0.35rem 1.1rem",
-              minWidth: "auto",
-              minHeight: "auto",
-              boxShadow: "none",
-              marginRight: 0,
-              marginLeft: 0,
-              cursor: "pointer",
-              transition: "background 0.18s, color 0.18s, border 0.18s"
-            }}
-            onClick={handleClose}
-            title="Cancel and close"
-          >
-            Cancel
-          </button>
         </div>
         <div
           style={{
