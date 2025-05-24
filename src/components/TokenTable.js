@@ -195,7 +195,7 @@ function TokenTable({tokens, onOpenSuggestions, isLoading, highlightedSymbols = 
                                     // Otherwise, show "Do it!" button
                                     // If quantity is 0, show "show me" instead of "Do it!"
                                     const qty = parseFloat(token.quantity);
-                                    const showMeLabel = (qty === 0 || isNaN(qty)) ? "Show me" : "Do it!";
+                                    const showMeLabel = (qty === 0 || isNaN(qty)) ? "Show!" : "Do it!";
                                     return (
                                         <button
                                             onClick={(e) => {
