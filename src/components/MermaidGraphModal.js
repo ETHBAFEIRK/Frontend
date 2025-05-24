@@ -66,7 +66,13 @@ function buildSubgraphFromSource(rates, sourceSymbol) {
   const nodeSet = new Set([sourceSymbol.toUpperCase()]);
   for (const node of endNodes) {
     let curr = node;
+    const pathVisited = new Set();
     while (prev[curr]) {
+      if (pathVisited.has(curr)) {
+        // Detected a loop, break to avoid infinite loop
+        break;
+      }
+      pathVisited.add(curr);
       const from = prev[curr];
       const to = curr;
       const kind = bestKind[`${from}|${to}`] || '';
