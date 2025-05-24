@@ -509,6 +509,7 @@ const ERC20_ABI = [
           onOpenSuggestions={handleOpenSuggestionsModal}
           isLoading={!isTestDataMode && blockchainTokens.length === 0 && !!walletAddress && !error && !!selectedNetwork} // Show loading if in real mode, no tokens yet, wallet connected, no general error, and network is supported
           highlightedSymbols={highlightedSymbols}
+          walletAddress={walletAddress}
         />
       </main>
       {error && !isModalOpen && <p className="error-message">{error}</p>} {/* Hide app error if modal is open for better UX */}

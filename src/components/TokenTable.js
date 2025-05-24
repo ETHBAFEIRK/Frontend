@@ -1,9 +1,18 @@
 import React from 'react';
 import './TokenTable.css';
 
-function TokenTable({tokens, onOpenSuggestions, isLoading, highlightedSymbols = []}) {
+function TokenTable({tokens, onOpenSuggestions, isLoading, highlightedSymbols = [], walletAddress}) {
     // Set this to false to hide coins without icons
     const showWithoutIcons = false;
+
+    // If wallet is not connected, show "please connect wallet" and hide the table
+    if (!walletAddress) {
+        return (
+            <div className="token-table-container">
+                <p style={{textAlign: "center", fontSize: "1.25rem", fontWeight: 600, margin: "2.5rem 0"}}>Please connect wallet</p>
+            </div>
+        );
+    }
 
     if (isLoading) {
         return (
