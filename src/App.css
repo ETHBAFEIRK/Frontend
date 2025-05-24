@@ -16,6 +16,9 @@ body {
   flex-direction: column;
   min-height: 100vh;
   background: none;
+  /* Ensure header-block is always on top visually */
+  position: relative;
+  z-index: 1;
 }
 
 .App-content {
