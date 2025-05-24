@@ -109,15 +109,16 @@ function TokenTable({ tokens, onOpenSuggestions, isLoading, highlightedSymbols =
                       return (
                         <span
                           style={{
-                            display: "inline-block",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
                             background: "#e6f0f7",
                             color: "#3b82f6",
                             borderRadius: "18px",
                             fontWeight: 700,
                             fontSize: "1.01rem",
-                            minWidth: "90px",
+                            minWidth: "110px",
                             minHeight: "38px",
-                            lineHeight: "38px",
                             textAlign: "center",
                             padding: "0 1.1rem"
                           }}
