@@ -156,27 +156,53 @@ function App() {
     setError(''); // Clear previous errors related to fetching
     console.log("Fetching blockchain token data for address:", userAddress);
 
-    // Mock data for demonstration, including a unique 'address' for each token contract
     const fetchedTokens = [
       {
         id: 'bc_eth',
         name: 'Ether (Real)',
         symbol: 'ETH',
-        quantity: balance, // Assuming balance is already fetched ETH balance for the connected wallet
+        quantity: balance, // Already fetched ETH balance
         apr: '4.2%',
         suggestions: ['Lido Staking (Real)', 'Rocket Pool Staking (Real)'],
-        address: '0x0000000000000000000000000000000000000000', // Special address for native ETH
-        isNative: true, // Flag for native token
+        address: '0x0000000000000000000000000000000000000000', // Native ETH
+        isNative: true,
       },
       {
-        id: 'bc_stk',
-        name: 'StakeToken (Real)',
-        symbol: 'STK',
-        quantity: '0', // Placeholder, fetch actual balance
-        apr: '7.5%',
-        suggestions: ['Native Staking Pool (Real)'],
-        address: '0xYOUR_STAKETOKEN_CONTRACT_ADDRESS_HERE', // Replace with actual contract address
+        id: 'bc_wsteth',
+        name: 'Wrapped stETH',
+        symbol: 'wstETH',
+        quantity: '0',
+        apr: '5.0%',
+        suggestions: ['Lido Wrap', 'Restake via EigenLayer'],
+        address: '0x6b8116B41bFd7e1A976cB892acB79926080A6Ca1',
       },
+      {
+        id: 'bc_usdt',
+        name: 'Tether USD',
+        symbol: 'USDT',
+        quantity: '0',
+        apr: '3.5%',
+        suggestions: ['Lend on Aave', 'Provide liquidity on Curve'],
+        address: '0xF2147b998141887Be7FA7834CCCD135e0067321a',
+      },
+      {
+        id: 'bc_wbtc',
+        name: 'Wrapped Bitcoin',
+        symbol: 'WBTC',
+        quantity: '0',
+        apr: '2.8%',
+        suggestions: ['Stake on RenVM', 'Lend on Compound'],
+        address: '0x29d1abD6A9d1d6961394dE0dBb85b4e89eC0E3f4',
+      },
+      {
+        id: 'bc_dai',
+        name: 'DAI Stablecoin',
+        symbol: 'DAI',
+        quantity: '0',
+        apr: '4.1%',
+        suggestions: ['Lend on Aave', 'Farm on Curve'],
+        address: '0xc4A8b48b1dB6584FB446Fc3BaE230dD3EF3C85DB',
+      }
     ];
 
     // Simulate fetching balances for ERC20 tokens (replace with actual calls)
