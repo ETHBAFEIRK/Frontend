@@ -323,11 +323,115 @@ const MermaidGraphModal = ({ rates }) => {
             if (mode === 'default' && incomingMap[nodeId]) {
               incoming = incomingMap[nodeId];
             }
-            let incomingMsg = '';
+            // --- Custom popup dialog like the pasted image ---
             if (incoming.length > 0) {
-              incomingMsg = `\nIncoming node(s): ${incoming.join(', ')}`;
+              // Find the first incoming token and its link/kind/apy from the rates
+              const incomingToken = incoming[0];
+              // Find the rate object in rates that matches incomingToken -> nodeId
+              let rateObj = null;
+              if (Array.isArray(rates)) {
+                rateObj = rates.find(
+                  r =>
+                    (r.input_symbol || '').toUpperCase() === incomingToken &&
+                    (r.output_token || '').toUpperCase() === nodeId
+                );
+              }
+              // Fallback: if not found, just use incomingToken and nodeId
+              let availableToStake = incomingToken;
+              let stakedAmount = nodeId;
+              let apy = rateObj && rateObj.apy ? rateObj.apy : null;
+              let kind = rateObj && rateObj.output_kind ? rateObj.output_kind : '';
+              let link = rateObj && rateObj.project_link ? rateObj.project_link : null;
+              let verb = (kind === "stake" || kind === "restake") ? kind : "stake";
+              if (!verb) verb = "stake";
+              // Compose dialog
+              setDialogOpen(true);
+              setClickedNode(
+                <div style={{
+                  width: 420,
+                  maxWidth: "90vw",
+                  background: "#23242a",
+                  borderRadius: 24,
+                  boxShadow: "0 4px 32px 0 rgba(58, 130, 246, 0.13)",
+                  padding: "2.2rem 2.2rem 1.7rem 2.2rem",
+                  color: "#fff",
+                  fontFamily: "Inter, Segoe UI, sans-serif",
+                  position: "relative"
+                }}>
+                  <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18}}>
+                    <div style={{fontWeight: 700, fontSize: "1.1rem", color: "#fff", opacity: 0.85}}>
+                      Available to {verb}
+                    </div>
+                    {link && (
+                      <a href={link} target="_blank" rel="noopener noreferrer"
+                        style={{
+                          background: "#23242a",
+                          color: "#fff",
+                          borderRadius: 16,
+                          padding: "0.3em 1em 0.3em 1em",
+                          fontWeight: 600,
+                          fontSize: "0.98rem",
+                          textDecoration: "none",
+                          border: "1.5px solid #3b82f6",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 8
+                        }}>
+                        {incomingToken}
+                        <span style={{
+                          display: "inline-block",
+                          width: 18,
+                          height: 18,
+                          background: "#3b82f6",
+                          borderRadius: "50%",
+                          marginLeft: 6
+                        }}></span>
+                      </a>
+                    )}
+                  </div>
+                  <div style={{fontSize: "2.1rem", fontWeight: 800, color: "#fff", marginBottom: 8}}>
+                    {availableToStake && !isNaN(Number(availableToStake)) ? Number(availableToStake).toFixed(4) : "0.0"} {incomingToken}
+                  </div>
+                  <hr style={{border: "none", borderTop: "1.5px solid #444", margin: "1.2rem 0"}} />
+                  <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8}}>
+                    <div style={{fontWeight: 700, fontSize: "1.1rem", color: "#fff", opacity: 0.85}}>
+                      {verb.charAt(0).toUpperCase() + verb.slice(1)}d amount
+                    </div>
+                    <div style={{fontWeight: 700, fontSize: "1.1rem", color: "#fff", opacity: 0.85}}>
+                      APY:
+                      <span style={{color: "#4ade80", fontWeight: 800, marginLeft: 8, fontSize: "1.2rem"}}>
+                        {apy ? `${apy.toFixed(1)}%` : "N/A"}
+                      </span>
+                    </div>
+                  </div>
+                  <div style={{fontSize: "2.1rem", fontWeight: 800, color: "#fff", marginBottom: 8}}>
+                    0.0 {stakedAmount}
+                  </div>
+                  <div style={{
+                    marginTop: 24,
+                    display: "flex",
+                    justifyContent: "center"
+                  }}>
+                    <button
+                      style={{
+                        background: "#3b82f6",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: 16,
+                        fontWeight: 700,
+                        fontSize: "1.15rem",
+                        padding: "0.7rem 2.2rem",
+                        cursor: "pointer",
+                        boxShadow: "0 2px 8px 0 rgba(58, 130, 246, 0.13)"
+                      }}
+                      onClick={() => { setDialogOpen(false); setClickedNode(null); }}
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              );
             }
-            alert(`Node: ${nodeId}\nLabel: ${label}${incomingMsg}`);
           };
         }
       });
