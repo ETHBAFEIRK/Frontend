@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Mermaid from './Mermaid';
 
 /**
@@ -203,6 +203,23 @@ const MermaidGraphModal = ({ rates }) => {
   const [mode, setMode] = useState('default'); // 'default' (subgraph) or 'full'
   const [sourceSymbol, setSourceSymbol] = useState(null);
 
+  // Handler to close modal
+  const handleClose = useCallback(() => {
+    setIsOpen(false);
+  }, []);
+
+  // Escape key handler
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setIsOpen(false);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isOpen]);
+
   React.useEffect(() => {
     const handler = (e) => {
       // If event.detail.token is present, use its symbol as source
@@ -252,7 +269,7 @@ const MermaidGraphModal = ({ rates }) => {
         padding: 0,
         margin: 0
       }}
-      onClick={() => setIsOpen(false)}
+      onClick={handleClose}
     >
       <div
         className="modal-content"
@@ -310,7 +327,7 @@ const MermaidGraphModal = ({ rates }) => {
               fontWeight: 700,
               transition: "color 0.2s"
             }}
-            onClick={() => setIsOpen(false)}
+            onClick={handleClose}
             aria-label="Close"
           >
             &times;
@@ -367,6 +384,29 @@ const MermaidGraphModal = ({ rates }) => {
               Show only paths from {sourceSymbol}
             </button>
           )}
+          <button
+            className="side-action-button"
+            style={{
+              background: "#fff",
+              color: "#232323",
+              border: "1.5px solid #e0e0e0",
+              borderRadius: "16px",
+              fontWeight: 600,
+              fontSize: "0.98rem",
+              padding: "0.35rem 1.1rem",
+              minWidth: "auto",
+              minHeight: "auto",
+              boxShadow: "none",
+              marginRight: 0,
+              marginLeft: 0,
+              cursor: "pointer",
+              transition: "background 0.18s, color 0.18s, border 0.18s"
+            }}
+            onClick={handleClose}
+            title="Cancel and close"
+          >
+            Cancel
+          </button>
         </div>
         <div
           style={{
