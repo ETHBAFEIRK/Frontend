@@ -19,6 +19,12 @@ function App() {
   const [error, setError] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTokenForModal, setSelectedTokenForModal] = useState(null);
+  const [isTestDataMode, setIsTestDataMode] = useState(true); // Default to test data mode
+
+  const toggleTestDataMode = () => {
+    setIsTestDataMode(prevMode => !prevMode);
+    // In a future step, you might want to clear wallet-specific data or re-fetch mock data here
+  };
 
   const connectWallet = async () => {
     setError(''); // Clear previous errors
@@ -60,6 +66,8 @@ function App() {
         error={error}
         connectWallet={connectWallet}
         setError={setError}
+        isTestDataMode={isTestDataMode}
+        toggleTestDataMode={toggleTestDataMode}
       />
       <main className="App-content">
         <TokenTable tokens={mockTokens} onOpenSuggestions={handleOpenSuggestionsModal} />
