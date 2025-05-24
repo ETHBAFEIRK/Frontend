@@ -112,9 +112,6 @@ const MermaidGraphModal = ({ rates }) => {
         <h2>Full Restaking Graph</h2>
         <div style={{ marginTop: '2em', background: '#181830', borderRadius: 8, padding: 12, overflowX: 'auto' }}>
           <Mermaid chart={graphCode} id="mermaid-graph-modal" />
-          <pre style={{ fontSize: 12, color: '#888', marginTop: 8, whiteSpace: 'pre-wrap' }}>
-            {graphCode}
-          </pre>
         </div>
       </div>
     </div>
