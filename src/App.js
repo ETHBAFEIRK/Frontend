@@ -14,25 +14,71 @@ const mockTokens = [
 ];
 
 function reconcileTokensWithRates(tokens, rates) {
-  // Extend each token with rates info if input_symbol matches token.symbol (case-insensitive)
+  // Build a directed graph from rates: input_symbol -> output_token with edge weight = apy
   if (!Array.isArray(tokens) || !Array.isArray(rates)) return tokens;
+
+  // Build adjacency list: {symbol: [{to, apy, rateObj}]}
+  const adj = {};
+  rates.forEach(rate => {
+    const from = (rate.input_symbol || '').toUpperCase();
+    const to = (rate.output_token || '').toUpperCase();
+    if (!from || !to) return;
+    if (!adj[from]) adj[from] = [];
+    adj[from].push({ to, apy: rate.apy, rateObj: rate });
+  });
+
+  // For each token, find the reachable token with max APY using BFS
+  function findMaxApyPath(startSymbol) {
+    const visited = new Set();
+    let maxApy = null;
+    let maxRate = null;
+    let queue = [{ symbol: startSymbol, minApy: null, path: [] }];
+
+    while (queue.length > 0) {
+      const { symbol, minApy, path } = queue.shift();
+      if (visited.has(symbol)) continue;
+      visited.add(symbol);
+
+      if (adj[symbol]) {
+        for (const edge of adj[symbol]) {
+          const nextApy = edge.apy;
+          // If this path has a higher APY, update
+          if (maxApy === null || nextApy > maxApy) {
+            maxApy = nextApy;
+            maxRate = edge.rateObj;
+          }
+          // Continue BFS
+          if (!visited.has(edge.to)) {
+            queue.push({ symbol: edge.to, minApy: null, path: [...path, edge.to] });
+          }
+        }
+      }
+    }
+    return { maxApy, maxRate };
+  }
+
+  // Map rates by input_symbol for direct matches (for apr column)
   const ratesBySymbol = {};
   rates.forEach(rate => {
     const symbol = (rate.input_symbol || '').toUpperCase();
     if (!ratesBySymbol[symbol]) ratesBySymbol[symbol] = [];
     ratesBySymbol[symbol].push(rate);
   });
+
   return tokens.map(token => {
     const symbol = (token.symbol || '').toUpperCase();
     const matchingRates = ratesBySymbol[symbol] || [];
-    // For demo, just take the first rate for APR, or keep original
-    let maxApr = token.maxApr;
+    // For APR, use direct match (first rate)
     let apr = token.apr;
     if (matchingRates.length > 0) {
-      // Find max APY among matches
-      const maxApy = Math.max(...matchingRates.map(r => r.apy || 0));
-      maxApr = (maxApy ? maxApy.toFixed(2) + '%' : token.maxApr);
-      apr = apr || maxApr;
+      const maxDirectApy = Math.max(...matchingRates.map(r => r.apy || 0));
+      apr = (maxDirectApy ? maxDirectApy.toFixed(2) + '%' : token.apr);
+    }
+    // For MAX APR, use best reachable via graph
+    const { maxApy } = findMaxApyPath(symbol);
+    let maxApr = token.maxApr;
+    if (maxApy !== null && maxApy !== undefined) {
+      maxApr = maxApy.toFixed(2) + '%';
     }
     return {
       ...token,
