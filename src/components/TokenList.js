@@ -1,18 +1,48 @@
 import React from 'react';
-import './TokenList.css';
+import './TokenTable.css'; // Renamed from TokenList.css
 
-function TokenList() {
-  return (
-    <div className="token-list-container">
-      <h2>Your Tokens</h2>
-      <p>Token list and APR will be displayed here.</p>
-      {/* Placeholder for token items */}
-      <div className="token-item-placeholder">
-        <p>Token A - APR: X%</p>
-        <p>Token B - APR: Y%</p>
+function TokenTable({ tokens, onOpenSuggestions }) {
+  if (!tokens || tokens.length === 0) {
+    return (
+      <div className="token-table-container">
+        <h2>Your Tokens</h2>
+        <p>No tokens to display.</p>
       </div>
+    );
+  }
+
+  return (
+    <div className="token-table-container">
+      <h2>Your Token Holdings</h2>
+      <table className="token-table">
+        <thead>
+          <tr>
+            <th>Token</th>
+            <th>Quantity</th>
+            <th>APR</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tokens.map((token) => (
+            <tr key={token.id}>
+              <td>{token.name} ({token.symbol})</td>
+              <td>{token.quantity}</td>
+              <td>{token.apr || 'N/A'}</td>
+              <td>
+                <button
+                  onClick={() => onOpenSuggestions(token)}
+                  className="suggestions-button"
+                >
+                  Suggestions
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
 
-export default TokenList;
+export default TokenTable;

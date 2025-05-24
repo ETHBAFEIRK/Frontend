@@ -2,13 +2,23 @@ import React, { useState } from 'react';
 import { BrowserProvider, formatEther } from 'ethers';
 import './App.css';
 import Header from './components/Header';
-import TokenList from './components/TokenList';
-import RestakedTokenList from './components/RestakedTokenList';
+import TokenTable from './components/TokenTable'; // Renamed from TokenList
+import Modal from './components/Modal'; // New Modal component
+
+// Mock data for tokens - in a real app, this would come from an API or wallet
+const mockTokens = [
+  { id: '1', name: 'Ether', symbol: 'ETH', quantity: '2.5', apr: '4.5%', suggestions: ['Lido Staking', 'Rocket Pool Staking', 'EigenLayer Restaking'] },
+  { id: '2', name: 'CoolToken', symbol: 'CTK', quantity: '1500', apr: '8.0%', suggestions: ['Native Staking Pool A', 'Yield Farm X', 'Lend on Protocol Y'] },
+  { id: '3', name: 'StableCoin', symbol: 'USDC', quantity: '500', apr: null, suggestions: ['Aave Lending', 'Compound Lending', 'Curve Pool'] },
+  { id: '4', name: 'AnotherCoin', symbol: 'ANC', quantity: '250', apr: '6.2%', suggestions: ['Binance Earn', 'Kraken Staking'] },
+];
 
 function App() {
   const [walletAddress, setWalletAddress] = useState(null);
   const [balance, setBalance] = useState(null);
   const [error, setError] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedTokenForModal, setSelectedTokenForModal] = useState(null);
 
   const connectWallet = async () => {
     setError(''); // Clear previous errors
@@ -32,6 +42,16 @@ function App() {
     }
   };
 
+  const handleOpenSuggestionsModal = (token) => {
+    setSelectedTokenForModal(token);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedTokenForModal(null);
+  };
+
   return (
     <div className="App">
       <Header
@@ -42,10 +62,16 @@ function App() {
         setError={setError}
       />
       <main className="App-content">
-        <TokenList />
-        <RestakedTokenList />
+        <TokenTable tokens={mockTokens} onOpenSuggestions={handleOpenSuggestionsModal} />
       </main>
-      {error && <p className="error-message">{error}</p>}
+      {error && !isModalOpen && <p className="error-message">{error}</p>} {/* Hide app error if modal is open for better UX */}
+      {isModalOpen && selectedTokenForModal && (
+        <Modal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          token={selectedTokenForModal}
+        />
+      )}
     </div>
   );
 }

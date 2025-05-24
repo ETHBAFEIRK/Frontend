@@ -1,0 +1,92 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75); /* Dark overlay */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000; /* Ensure it's on top */
+}
+
+.modal-content {
+  background-color: #1a1a2e; /* Dark blue/purple, same as header */
+  padding: 2rem;
+  border-radius: 8px;
+  border: 1px solid #4a4a70;
+  color: #e0e0e0;
+  width: 90%;
+  max-width: 500px; /* Max width for the modal */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  position: relative; /* For close button positioning */
+  animation: fadeInModal 0.3s ease-out;
+}
+
+@keyframes fadeInModal {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-close-button {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: none;
+  border: none;
+  color: #e0e0e0;
+  font-size: 1.8rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.modal-close-button:hover {
+  color: #00ffff; /* Cyan on hover */
+}
+
+.modal-content h2 {
+  color: #00ffff; /* Cyan */
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.suggestions-list ul {
+  list-style: none;
+  padding: 0;
+}
+
+.suggestions-list li {
+  background-color: #2a2a4e; /* Darker background for list items */
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border-radius: 4px;
+  border-left: 3px solid #00ffff; /* Accent border */
+}
+
+.modal-actions {
+  margin-top: 1.5rem;
+  text-align: right;
+}
+
+.action-button {
+  padding: 0.75rem 1.5rem;
+  background-color: #00ffff;
+  color: #101020;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.action-button:hover {
+  background-color: #00e0e0;
+}
