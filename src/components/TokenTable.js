@@ -44,11 +44,11 @@ function TokenTable({ tokens, onOpenSuggestions, isLoading, highlightedSymbols =
                 key={token.id}
                 className={isHighlighted ? 'highlighted-token-row' : ''}
               >
-                <td>{token.name} ({token.symbol})</td>
-                <td>{token.quantity}</td>
-                <td>{token.apr || 'N/A'}</td>
-                <td>{token.maxApr || 'N/A'}</td>
-                <td>
+                <td data-label="Token">{token.name} ({token.symbol})</td>
+                <td data-label="Quantity">{token.quantity}</td>
+                <td data-label="Current APY">{token.apr || 'N/A'}</td>
+                <td data-label="Max APY">{token.maxApr || 'N/A'}</td>
+                <td data-label="Action">
                   <button
                     onClick={() => onOpenSuggestions(token)}
                     className="suggestions-button"

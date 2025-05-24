@@ -8,6 +8,7 @@
   width: 90%; /* Adjust width as needed */
   max-width: 1000px; /* Max width for larger screens */
   overflow-x: auto; /* Allow horizontal scrolling on small screens if table is too wide */
+  box-sizing: border-box;
 }
 
 .token-table-container h2 {
@@ -20,6 +21,14 @@
 .token-table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 600px;
+}
+
+@media (max-width: 700px) {
+  .token-table {
+    min-width: 0;
+    font-size: 0.95rem;
+  }
 }
 
 .token-table th,
@@ -65,18 +74,72 @@
 
 /* Responsive adjustments for the table */
 @media (max-width: 600px) {
-  .token-table th,
-  .token-table td {
-    padding: 0.5rem;
-    font-size: 0.9rem; /* Smaller font on small screens */
-  }
-  .suggestions-button {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.85rem;
-  }
   .token-table-container {
     margin: 0.5rem;
     padding: 0.5rem;
+    width: 99vw;
+    max-width: 100vw;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+  .token-table th,
+  .token-table td {
+    padding: 0.4rem 0.3rem;
+    font-size: 0.92rem;
+    word-break: break-word;
+  }
+  .suggestions-button {
+    padding: 0.4rem 0.7rem;
+    font-size: 0.85rem;
+  }
+  .token-table {
+    font-size: 0.92rem;
+    min-width: 400px;
+  }
+  .token-table thead {
+    display: none;
+  }
+  .token-table,
+  .token-table tbody,
+  .token-table tr,
+  .token-table td {
+    display: block;
+    width: 100%;
+  }
+  .token-table tr {
+    margin-bottom: 1.2em;
+    border-bottom: 2px solid #3a3a5e;
+    background: #23234a;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    padding: 0.5em 0.2em;
+  }
+  .token-table td {
+    border: none;
+    position: relative;
+    padding-left: 45%;
+    min-height: 32px;
+    display: flex;
+    align-items: center;
+    font-size: 1em;
+  }
+  .token-table td:before {
+    position: absolute;
+    left: 0.5em;
+    width: 44%;
+    white-space: nowrap;
+    font-weight: bold;
+    color: #00ffff;
+    font-size: 0.98em;
+    text-align: left;
+    content: attr(data-label);
+    opacity: 0.85;
+  }
+  .highlighted-token-row {
+    background-color: #fffbe6 !important;
+    color: #222 !important;
+    font-weight: bold;
   }
 }
 /* Highlighted token row for Compute results */
