@@ -53,6 +53,28 @@ body {
   }
 }
 
+/* Responsive adjustments for App container */
+@media (max-width: 768px) {
+  .App-content {
+    padding: 1rem 0.5rem; /* Adjust padding for smaller screens */
+    gap: 1.5rem; /* Adjust gap for smaller screens */
+  }
+
+  .error-message {
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+    margin: 1rem auto;
+  }
+}
+
+/* Further adjustments for very small screens if needed */
+@media (max-width: 480px) {
+  .App-content {
+    padding: 0.5rem 0.2rem;
+    gap: 1rem;
+  }
+}
+
 @media (max-width: 700px) {
   .App-content {
     padding: 1rem 0.2rem;

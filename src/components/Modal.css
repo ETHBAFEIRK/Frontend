@@ -102,3 +102,54 @@
   background: linear-gradient(90deg, #3b82f6 0%, #6ad1e3 100%);
   box-shadow: 0 4px 16px 0 rgba(58, 130, 246, 0.13);
 }
+
+/* Responsive Modal Adjustments */
+@media (max-width: 768px) {
+  .modal-content {
+    width: 90%;
+    max-width: 90vw; /* Ensure it doesn't exceed viewport width */
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+    max-height: 85vh; /* Limit height and allow scrolling */
+    overflow-y: auto; /* Enable vertical scroll if content overflows */
+  }
+
+  .modal-content h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .suggestions-list li {
+    font-size: 1rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .action-button {
+    padding: 0.75rem 1.8rem;
+    font-size: 1rem;
+  }
+
+  .modal-close-button {
+    font-size: 1.8rem;
+    top: 12px;
+    right: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    padding: 1.5rem 1rem 1rem 1rem;
+  }
+  .modal-content h2 {
+    font-size: 1.3rem;
+  }
+  .suggestions-list li {
+    font-size: 0.95rem;
+  }
+  .action-button {
+    width: 100%; /* Make action button full width */
+    margin-top: 0.5rem;
+  }
+  .modal-actions {
+    text-align: center; /* Center buttons */
+  }
+}

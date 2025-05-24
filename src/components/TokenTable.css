@@ -181,6 +181,12 @@
     content: attr(data-label);
     opacity: 0.85;
   }
+  .token-table td[data-label="Action"] {
+    justify-content: flex-end; /* Align button/content to the right */
+    /* The inline style padding: '0.3rem 0.5rem' on this TD in JS means its
+       padding-left is 0.5rem. The "Action:" label will be in this small space
+       on the far left, and the button/status will be on the far right of the cell. */
+  }
   .highlighted-token-row {
     background-color: #fffbe6 !important;
     color: #232323 !important;
