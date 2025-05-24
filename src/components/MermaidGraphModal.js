@@ -12,6 +12,8 @@ function buildSubgraphFromSource(rates, sourceSymbol) {
   const adj = {};
   const edgeInfo = {};
   const nodes = new Set();
+  // Map to collect points for each token (by symbol, uppercased)
+  const pointsByToken = {};
   for (const rate of rates) {
     const from = (rate.input_symbol || '').toUpperCase();
     const to = (rate.output_token || '').toUpperCase();
@@ -22,6 +24,10 @@ function buildSubgraphFromSource(rates, sourceSymbol) {
     nodes.add(to);
     edgeInfo[`${from}|${to}`] = edgeInfo[`${from}|${to}`] || [];
     edgeInfo[`${from}|${to}`].push({ kind: rate.output_kind || '', apy: rate.apy });
+    // Collect points for the output token (if present and non-empty)
+    if (rate.points && typeof rate.points === "string" && rate.points.trim()) {
+      pointsByToken[to] = rate.points.trim();
+    }
   }
 
   // Find all best-APY nodes reachable from source (case-insensitive)
@@ -99,11 +105,23 @@ function buildSubgraphFromSource(rates, sourceSymbol) {
   const mermaid = ['graph LR'];
   for (const node of Array.from(nodeSet)) {
     const apy = bestApy[node];
+    // Compose label: always show points if present, then APY if present, else just node
+    let label = node;
+    const points = pointsByToken[node];
     if (apy !== undefined && node !== sourceSymbol.toUpperCase()) {
-      mermaid.push(`    ${node}["${node} (${apy.toFixed(2)}%)"]`);
+      if (points) {
+        label = `${node} (${apy.toFixed(2)}%)\\n${points}`;
+      } else {
+        label = `${node} (${apy.toFixed(2)}%)`;
+      }
     } else {
-      mermaid.push(`    ${node}["${node}"]`);
+      if (points) {
+        label = `${node}\\n${points}`;
+      } else {
+        label = `${node}`;
+      }
     }
+    mermaid.push(`    ${node}["${label}"]`);
   }
   for (const { from, to, kind } of uniqueEdges) {
     const label = kind ? kind.replace(/"/g, '\\"') : '';
@@ -126,6 +144,8 @@ function buildMermaidGraph(rates) {
   const nodes = new Set();
   const edge_map = {};
   const target_apy = {};
+  // Map to collect points for each token (by symbol, uppercased)
+  const pointsByToken = {};
 
   for (const rate of rates) {
     const from_token = rate.input_symbol;
@@ -139,6 +159,10 @@ function buildMermaidGraph(rates) {
     edge_map[key].push([kind, apy]);
     if (!target_apy[to_token] || apy > target_apy[to_token]) {
       target_apy[to_token] = apy;
+    }
+    // Collect points for the output token (if present and non-empty)
+    if (rate.points && typeof rate.points === "string" && rate.points.trim()) {
+      pointsByToken[(to_token || '').toUpperCase()] = rate.points.trim();
     }
   }
 
@@ -186,12 +210,24 @@ function buildMermaidGraph(rates) {
 
   const mermaid = ["graph LR"];
   for (const node of Array.from(pruned_nodes).sort()) {
+    // Compose label: always show points if present, then APY if present, else just node
+    let label = node;
+    const points = pointsByToken[(node || '').toUpperCase()];
     if (target_apy[node]) {
       const apy_val = target_apy[node];
-      mermaid.push(`    ${node}["${node} (${apy_val.toFixed(2)}%)"]`);
+      if (points) {
+        label = `${node} (${apy_val.toFixed(2)}%)\\n${points}`;
+      } else {
+        label = `${node} (${apy_val.toFixed(2)}%)`;
+      }
     } else {
-      mermaid.push(`    ${node}["${node}"]`);
+      if (points) {
+        label = `${node}\\n${points}`;
+      } else {
+        label = `${node}`;
+      }
     }
+    mermaid.push(`    ${node}["${label}"]`);
   }
   for (const [from_token, to_token, label] of pruned_edges) {
     if (label) {
