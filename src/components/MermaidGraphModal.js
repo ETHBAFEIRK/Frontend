@@ -486,7 +486,7 @@ const MermaidGraphModal = ({ rates }) => {
             flex: 1
           }}>
             {mode === 'default' && sourceSymbol
-              ? `Restaking Paths from ${sourceSymbol}`
+              ? `Restaking Paths from ${sourceSymbol}${clickedNode && clickedNode._mainPageToken && clickedNode._mainPageToken.quantity !== undefined ? ` (${clickedNode._mainPageToken.quantity})` : ''}`
               : 'Full Restaking Graph'}
           </h2>
           <button
