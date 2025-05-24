@@ -31,8 +31,8 @@ function TokenTable({ tokens, onOpenSuggestions, isLoading, highlightedSymbols =
           <tr>
             <th>Token</th>
             <th>Quantity</th>
-            <th>Current APR</th>
-            <th>Max APR</th>
+            <th>Current APY</th>
+            <th>Max APY</th>
             <th>Action</th>
           </tr>
         </thead>
