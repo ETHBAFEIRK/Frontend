@@ -197,7 +197,7 @@ function buildMermaidGraph(rates) {
   return mermaid.join('\n');
 }
 
-const MermaidGraphModal = ({ rates }) => {
+const MermaidGraphModal = ({ rates, tokens }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [graphCode, setGraphCode] = useState('');
   const [mode, setMode] = useState('default'); // 'default' (subgraph) or 'full'
@@ -343,24 +343,14 @@ const MermaidGraphModal = ({ rates }) => {
                 );
               }
               // Fallback: if not found, just use incomingToken and nodeId
-              let availableToStake = null;
-              // Try to get available amount from the main page data (TokenTable tokens)
-              // We'll look for a token with symbol === incomingToken
-              let availableToken = null;
-              if (window && window.__restaker_tokens) {
-                availableToken = window.__restaker_tokens.find(
-                  t => (t.symbol || '').toUpperCase() === incomingToken
+              let availableToStake = "0.0"; // Default quantity
+              if (Array.isArray(tokens) && incomingToken) {
+                const tokenToStake = tokens.find(
+                  t => (t.symbol || '').toUpperCase() === incomingToken.toUpperCase()
                 );
-              }
-              if (!availableToken && window && window.__restaker_last_tokens) {
-                availableToken = window.__restaker_last_tokens.find(
-                  t => (t.symbol || '').toUpperCase() === incomingToken
-                );
-              }
-              if (availableToken && availableToken.quantity !== undefined) {
-                availableToStake = availableToken.quantity;
-              } else {
-                availableToStake = "0.0";
+                if (tokenToStake && tokenToStake.quantity !== undefined) {
+                  availableToStake = String(tokenToStake.quantity); // Ensure it's a string
+                }
               }
               let stakedAmount = nodeId;
               let apy = rateObj && rateObj.apy ? rateObj.apy : null;

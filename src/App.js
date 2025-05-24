@@ -526,7 +526,7 @@ const ERC20_ABI = [
           rates={rates}
         />
       )}
-      <MermaidGraphModal rates={rates} />
+      <MermaidGraphModal rates={rates} tokens={reconciledTokens} />
     </div>
   );
 }
