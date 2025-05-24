@@ -104,15 +104,18 @@ function Modal({ isOpen, onClose, token, rates }) {
   // Dynamically load mermaid only if needed
   useEffect(() => {
     if (showGraph && graphCode && mermaidRef.current) {
-      import('mermaid').then((mermaid) => {
-        // Clean up previous render
-        mermaidRef.current.innerHTML = '';
-        // Render the graph
-        mermaid.default.initialize({ startOnLoad: false, theme: "dark" });
-        mermaid.default.render('mermaid-graph', graphCode, (svgCode) => {
-          mermaidRef.current.innerHTML = svgCode;
+      // Only render if running in a browser environment
+      if (typeof window !== "undefined" && typeof document !== "undefined") {
+        import('mermaid').then((mermaid) => {
+          // Clean up previous render
+          mermaidRef.current.innerHTML = '';
+          // Render the graph
+          mermaid.default.initialize({ startOnLoad: false, theme: "dark" });
+          mermaid.default.render('mermaid-graph', graphCode, (svgCode) => {
+            mermaidRef.current.innerHTML = svgCode;
+          });
         });
-      });
+      }
     }
   }, [showGraph, graphCode]);
 
