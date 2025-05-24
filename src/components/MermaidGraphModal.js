@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
+import Mermaid from './Mermaid';
 
 function buildMermaidGraph(rates) {
   if (!Array.isArray(rates)) return '';
@@ -90,9 +91,8 @@ function buildMermaidGraph(rates) {
 const MermaidGraphModal = ({ rates }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [graphCode, setGraphCode] = useState('');
-  const mermaidRef = useRef(null);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const handler = (e) => {
       setGraphCode(buildMermaidGraph(rates));
       setIsOpen(true);
@@ -100,20 +100,6 @@ const MermaidGraphModal = ({ rates }) => {
     window.addEventListener('show-mermaid-graph', handler);
     return () => window.removeEventListener('show-mermaid-graph', handler);
   }, [rates]);
-
-  useEffect(() => {
-    if (isOpen && graphCode && mermaidRef.current) {
-      const domDocument = mermaidRef.current.ownerDocument || window.document;
-      import('mermaid').then((mermaid) => {
-        mermaidRef.current.innerHTML = '';
-        mermaid.default.initialize({ startOnLoad: false, theme: "dark" });
-        const tempDiv = domDocument.createElement('div');
-        mermaid.default.render('mermaid-graph-modal', graphCode, (svgCode) => {
-          mermaidRef.current.innerHTML = svgCode;
-        }, tempDiv);
-      });
-    }
-  }, [isOpen, graphCode]);
 
   if (!isOpen) return null;
 
@@ -125,7 +111,7 @@ const MermaidGraphModal = ({ rates }) => {
         </button>
         <h2>Full Restaking Graph</h2>
         <div style={{ marginTop: '2em', background: '#181830', borderRadius: 8, padding: 12, overflowX: 'auto' }}>
-          <div ref={mermaidRef} />
+          <Mermaid chart={graphCode} id="mermaid-graph-modal" />
           <pre style={{ fontSize: 12, color: '#888', marginTop: 8, whiteSpace: 'pre-wrap' }}>
             {graphCode}
           </pre>
