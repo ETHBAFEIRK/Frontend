@@ -756,9 +756,6 @@ const MermaidGraphModal = ({ rates, tokens }) => {
                         </a>
                       )}
                     </div>
-                    <div style={{ fontSize: "2.1rem", fontWeight: 800, color: "#fff", marginBottom: 8 }}>
-                      {stakeDialog.availableToStake} {stakeDialog.incomingToken}
-                    </div>
                     <hr style={{ border: "none", borderTop: "1.5px solid #444", margin: "1.2rem 0" }} />
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
                       <div style={{ fontWeight: 700, fontSize: "1.1rem", color: "#fff", opacity: 0.85 }}>
@@ -785,7 +782,7 @@ const MermaidGraphModal = ({ rates, tokens }) => {
                       </div>
                     </div>
                     <div style={{ fontSize: "2.1rem", fontWeight: 800, color: "#fff", marginBottom: 8 }}>
-                      0.0 {stakeDialog.stakedAmount}
+                      {stakeDialog.amount && !isNaN(parseFloat(stakeDialog.amount)) ? (parseFloat(stakeDialog.amount) * 0.98).toFixed(5) : '0.0'} {stakeDialog.stakedAmount}
                     </div>
                     <div style={{
                       marginTop: 24,
