@@ -13,6 +13,29 @@ const mockTokens = [
   { id: '4', name: 'AnotherCoin', symbol: 'ANC', quantity: '250', apr: '6.2%', suggestions: ['Binance Earn', 'Kraken Staking'] },
 ];
 
+const NETWORKS = {
+  sepolia: {
+    id: 'sepolia',
+    chainId: '0xaa36a7', // 11155111 в hex
+    name: 'Ethereum Sepolia Testnet',
+    currencyName: 'Sepolia ETH',
+    currencySymbol: 'SepoliaETH',
+    currencyDecimals: 18,
+    rpcUrls: ['https://rpc.sepolia.org'],
+    blockExplorerUrls: ['https://sepolia.etherscan.io']
+  },
+  zircuit: {
+    id: 'zircuit',
+    chainId: '0xbf03',
+    name: 'Zircuit Garfield Testnet',
+    currencyName: 'Ether',
+    currencySymbol: 'ETH',
+    currencyDecimals: 18,
+    rpcUrls: ['https://rpc.zircuit.com'],
+    blockExplorerUrls: ['https://explorer.zircuit.com']
+  }
+};
+
 function App() {
   const [walletAddress, setWalletAddress] = useState(null);
   const [balance, setBalance] = useState(null);
@@ -23,29 +46,7 @@ function App() {
   const [blockchainTokens, setBlockchainTokens] = useState([]);
   const [provider, setProvider] = useState(null); // Store provider for reuse
   
-  const NETWORKS = {
-    sepolia: { // Changed from ethereum to sepolia
-      id: 'sepolia', // Internal ID for React state
-      chainId: '0xaa36a7', // Sepolia chain ID (11155111)
-      name: 'Sepolia Testnet', // Updated name
-      currencyName: 'Sepolia Ether', // Standard name for Sepolia's native currency
-      currencySymbol: 'ETH', // Standard symbol
-      currencyDecimals: 18, // Standard decimals
-      rpcUrls: ['https://rpc.sepolia.org'], // Public Sepolia RPC
-      blockExplorerUrls: ['https://sepolia.etherscan.io'] // Sepolia Etherscan
-    },
-    zircuit: { // Changed key from 'zirquit' to 'zircuit' to match the id property
-      id: 'zircuit',
-      chainId: '0xBEE2', // 48898 в hex
-      name: 'Zircuit Garfield Testnet',
-      currencyName: 'Garfield ETH', // More specific name
-      currencySymbol: 'GETH',      // More specific symbol to avoid MetaMask warning
-      currencyDecimals: 18,
-      rpcUrls: ['https://rpc.zircuit.com'], // публичный RPC
-      blockExplorerUrls: ['https://explorer.zircuit.com'] // обозреватель блоков
-    }
-  };
-  const INITIAL_NETWORK_ID = 'sepolia'; // Updated initial network
+  const INITIAL_NETWORK_ID = 'ethereum';
   const [currentNetworkId, setCurrentNetworkId] = useState(INITIAL_NETWORK_ID);
   const selectedNetwork = NETWORKS[currentNetworkId] || null;
 
@@ -118,7 +119,9 @@ function App() {
   useEffect(() => {
     const handleChainChanged = async (_chainId) => {
       setError(''); // Clear previous network errors
-      const network = Object.values(NETWORKS).find(n => n.chainId === _chainId);
+      const network = Object.values(NETWORKS).find(
+        n => n.chainId.toLowerCase() === _chainId.toLowerCase()
+      );
       if (network) {
         setCurrentNetworkId(network.id);
         if (walletAddress && window.ethereum) {
