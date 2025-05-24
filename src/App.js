@@ -13,6 +13,29 @@ const mockTokens = [
   { id: '4', name: 'AnotherCoin', symbol: 'ANC', quantity: '250', apr: '6.2%', suggestions: ['Binance Earn', 'Kraken Staking'] },
 ];
 
+const NETWORKS = {
+  sepolia: {
+    id: 'sepolia',
+    chainId: '0xaa36a7', // 11155111 в hex
+    name: 'Ethereum Sepolia Testnet',
+    currencyName: 'Sepolia ETH',
+    currencySymbol: 'SepoliaETH',
+    currencyDecimals: 18,
+    rpcUrls: ['https://rpc.sepolia.org'],
+    blockExplorerUrls: ['https://sepolia.etherscan.io']
+  },
+  zircuit: {
+    id: 'zircuit',
+    chainId: '0xbf03',
+    name: 'Zircuit Garfield Testnet',
+    currencyName: 'Ether',
+    currencySymbol: 'ETH',
+    currencyDecimals: 18,
+    rpcUrls: ['https://rpc.zircuit.com'],
+    blockExplorerUrls: ['https://explorer.zircuit.com']
+  }
+};
+
 function reconcileTokensWithRates(tokens, rates) {
   // Build a directed graph from rates: input_symbol -> output_token with edge weight = apy
   if (!Array.isArray(tokens) || !Array.isArray(rates)) return tokens;
@@ -98,32 +121,7 @@ function App() {
   const [isTestDataMode, setIsTestDataMode] = useState(true); // Default to test data mode
   const [blockchainTokens, setBlockchainTokens] = useState([]);
   const [provider, setProvider] = useState(null); // Store provider for reuse
-  const [highlightedSymbols, setHighlightedSymbols] = useState([]); // For Compute highlighting
-  const [rates, setRates] = useState([]);
-  const [reconciledTokens, setReconciledTokens] = useState([]);
-  const ratesFetchedRef = useRef(false);
-  const NETWORKS = {
-    ethereum: {
-      id: 'ethereum', // Internal ID for React state
-      chainId: '0x1', // Hexadecimal chain ID
-      name: 'Ethereum Mainnet',
-      currencyName: 'Ether',
-      currencySymbol: 'ETH',
-      currencyDecimals: 18,
-      rpcUrls: [''], // Optional: MetaMask usually has its own default for common networks. For add, it's needed.
-      blockExplorerUrls: ['https://etherscan.io'] // Optional
-    },
-    zircuit: { // Changed key from 'zirquit' to 'zircuit' to match the id property
-      id: 'zircuit',
-      chainId: '0xBEE2', // 48898 в hex
-      name: 'Zircuit Garfield Testnet',
-      currencyName: 'Ether',
-      currencySymbol: 'ETH',
-      currencyDecimals: 18,
-      rpcUrls: ['https://rpc.zircuit.com'], // публичный RPC
-      blockExplorerUrls: ['https://explorer.zircuit.com'] // обозреватель блоков
-    }
-  };
+  
   const INITIAL_NETWORK_ID = 'ethereum';
   const [currentNetworkId, setCurrentNetworkId] = useState(INITIAL_NETWORK_ID);
   const selectedNetwork = NETWORKS[currentNetworkId] || null;
@@ -225,7 +223,9 @@ function App() {
   useEffect(() => {
     const handleChainChanged = async (_chainId) => {
       setError(''); // Clear previous network errors
-      const network = Object.values(NETWORKS).find(n => n.chainId === _chainId);
+      const network = Object.values(NETWORKS).find(
+        n => n.chainId.toLowerCase() === _chainId.toLowerCase()
+      );
       if (network) {
         setCurrentNetworkId(network.id);
         if (walletAddress && window.ethereum) {
