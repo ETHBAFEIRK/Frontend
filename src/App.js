@@ -139,7 +139,7 @@ const ERC20_ABI = [
   // Fetch rates from /rates endpoint
   const fetchRates = useCallback(async () => {
     try {
-      const resp = await fetch('/rates');
+      const resp = await fetch('/api/rates');
       if (!resp.ok) throw new Error('Failed to fetch rates');
       const data = await resp.json();
       setRates(data);
