@@ -289,12 +289,26 @@ function App() {
       const data = await resp.json();
       console.log('Rates:', data);
 
+      // Extract all input_symbol values from the response
+      const inputSymbols = Array.isArray(data)
+        ? data.map(item => (item.input_symbol || '').toUpperCase()).filter(Boolean)
+        : [];
+
+      // Get all token symbols from holdings (current table)
+      const tokens = isTestDataMode ? mockTokens : blockchainTokens;
+      const tokenSymbols = tokens.map(token => (token.symbol || '').toUpperCase());
+
+      // Logging: which tokens are checked and whether found in /rates response
+      tokenSymbols.forEach(symbol => {
+        const found = inputSymbols.includes(symbol);
+        console.log(
+          `[Compute] Checking token symbol: "${symbol}" - ${found ? 'FOUND in /rates input_symbol' : 'NOT found in /rates input_symbol'}`
+        );
+      });
+
       // Highlight tokens whose symbol is in data.input_symbol
-      if (data && Array.isArray(data.input_symbol)) {
-        setHighlightedSymbols(data.input_symbol);
-      } else {
-        setHighlightedSymbols([]);
-      }
+      setHighlightedSymbols(inputSymbols);
+
     } catch (err) {
       setError('Error fetching rates: ' + err.message);
       setHighlightedSymbols([]);
