@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { BrowserProvider, formatEther } from 'ethers';
 import './App.css';
 import Header from './components/Header';
@@ -20,10 +20,86 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTokenForModal, setSelectedTokenForModal] = useState(null);
   const [isTestDataMode, setIsTestDataMode] = useState(true); // Default to test data mode
+  const [blockchainTokens, setBlockchainTokens] = useState([]);
+  const [provider, setProvider] = useState(null); // Store provider for reuse
+
+  // Mock function to simulate fetching token data from blockchain
+  const fetchBlockchainTokenData = useCallback(async (walletProvider, userAddress) => {
+    if (!walletProvider || !userAddress) {
+      setBlockchainTokens([]); // Clear tokens if no provider or address
+      return;
+    }
+    setError(''); // Clear previous errors related to fetching
+    console.log("Fetching blockchain token data for address:", userAddress);
+    // Placeholder for actual blockchain fetching logic
+    // You would use walletProvider to interact with smart contracts or query balances
+    // For each token, you'd need its contract address and ABI (for ERC20 tokens)
+
+    // Example: Fetching ETH balance is already done in connectWallet,
+    // but you might want to represent ETH as a token in this list too.
+
+    // Mock data for demonstration, including a unique 'address' for each token contract
+    const fetchedTokens = [
+      {
+        id: 'bc_eth',
+        name: 'Ether (Real)',
+        symbol: 'ETH',
+        quantity: balance, // Assuming balance is already fetched ETH balance for the connected wallet
+        apr: '4.2%',
+        suggestions: ['Lido Staking (Real)', 'Rocket Pool Staking (Real)'],
+        address: '0x0000000000000000000000000000000000000000', // Special address for native ETH
+        isNative: true, // Flag for native token
+      },
+      {
+        id: 'bc_stk',
+        name: 'StakeToken (Real)',
+        symbol: 'STK',
+        quantity: '0', // Placeholder, fetch actual balance
+        apr: '7.5%',
+        suggestions: ['Native Staking Pool (Real)'],
+        address: '0xYOUR_STAKETOKEN_CONTRACT_ADDRESS_HERE', // Replace with actual contract address
+      },
+      // Add more token fetching logic here
+      // e.g., const tokenContract = new Contract(TOKEN_ADDRESS, TOKEN_ABI, walletProvider.getSigner());
+      // const userTokenBalance = await tokenContract.balanceOf(userAddress);
+      // const tokenName = await tokenContract.name();
+      // const tokenSymbol = await tokenContract.symbol();
+    ];
+
+    // Simulate fetching balances for ERC20 tokens (replace with actual calls)
+    const updatedFetchedTokens = await Promise.all(fetchedTokens.map(async token => {
+      if (token.isNative) return token; // ETH balance is already available via `balance` state
+      try {
+        // Placeholder: Replace with actual balance fetching logic using token.address
+        // const signer = await walletProvider.getSigner();
+        // const contract = new Contract(token.address, ERC20_ABI, signer);
+        // const bal = await contract.balanceOf(userAddress);
+        // const decimals = await contract.decimals(); // You'll need decimals for correct formatting
+        // return { ...token, quantity: formatUnits(bal, decimals) };
+        await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
+        return { ...token, quantity: (Math.random() * 1000).toFixed(2) }; // Mock quantity
+      } catch (fetchErr) {
+        console.error(`Error fetching balance for ${token.symbol}:`, fetchErr);
+        setError(prev => prev + `\nError fetching ${token.symbol}.`);
+        return { ...token, quantity: 'Error' };
+      }
+    }));
+
+    setBlockchainTokens(updatedFetchedTokens);
+  }, [balance]); // Add balance as dependency, as it's used for ETH quantity
 
   const toggleTestDataMode = () => {
-    setIsTestDataMode(prevMode => !prevMode);
-    // In a future step, you might want to clear wallet-specific data or re-fetch mock data here
+    setIsTestDataMode(prevMode => {
+      const newMode = !prevMode;
+      if (newMode) { // Switched to Test Data Mode
+        setBlockchainTokens([]); // Clear blockchain tokens
+      } else { // Switched to Real Data Mode
+        if (walletAddress && provider) {
+          fetchBlockchainTokenData(provider, walletAddress);
+        }
+      }
+      return newMode;
+    });
   };
 
   const connectWallet = async () => {
@@ -35,13 +111,21 @@ function App() {
 
     try {
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      setWalletAddress(accounts[0]);
+      const userAddress = accounts[0];
+      setWalletAddress(userAddress);
 
-      const provider = new BrowserProvider(window.ethereum);
-      const signer = await provider.getSigner();
-      const balanceInWei = await provider.getBalance(signer.address);
+      const browserProvider = new BrowserProvider(window.ethereum);
+      setProvider(browserProvider); // Store provider
+
+      const signer = await browserProvider.getSigner();
+      const balanceInWei = await browserProvider.getBalance(signer.address);
       const balanceInEth = formatEther(balanceInWei);
       setBalance(balanceInEth);
+
+      // If not in test data mode, fetch blockchain tokens after connecting
+      if (!isTestDataMode) {
+        fetchBlockchainTokenData(browserProvider, userAddress);
+      }
     } catch (err) {
       setError('Error connecting to MetaMask. Please check your wallet and try again.');
       console.error(err);
@@ -70,7 +154,11 @@ function App() {
         toggleTestDataMode={toggleTestDataMode}
       />
       <main className="App-content">
-        <TokenTable tokens={mockTokens} onOpenSuggestions={handleOpenSuggestionsModal} />
+        <TokenTable
+          tokens={isTestDataMode ? mockTokens : blockchainTokens}
+          onOpenSuggestions={handleOpenSuggestionsModal}
+          isLoading={!isTestDataMode && blockchainTokens.length === 0 && !!walletAddress && !error} // Show loading if in real mode, no tokens yet, wallet connected, and no general error
+        />
       </main>
       {error && !isModalOpen && <p className="error-message">{error}</p>} {/* Hide app error if modal is open for better UX */}
       {isModalOpen && selectedTokenForModal && (

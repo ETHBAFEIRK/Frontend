@@ -1,12 +1,21 @@
 import React from 'react';
-import './TokenTable.css'; // Renamed from TokenList.css
+import './TokenTable.css';
 
-function TokenTable({ tokens, onOpenSuggestions }) {
+function TokenTable({ tokens, onOpenSuggestions, isLoading }) {
+  if (isLoading) {
+    return (
+      <div className="token-table-container">
+        <h2>Your Token Holdings</h2>
+        <p>Loading token data from blockchain...</p>
+      </div>
+    );
+  }
+
   if (!tokens || tokens.length === 0) {
     return (
       <div className="token-table-container">
-        <h2>Your Tokens</h2>
-        <p>No tokens to display.</p>
+        <h2>Your Token Holdings</h2>
+        <p>No tokens to display. Connect your wallet or switch to Test Data Mode to see mock tokens.</p>
       </div>
     );
   }
