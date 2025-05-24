@@ -174,7 +174,9 @@ function TokenTable({tokens, onOpenSuggestions, isLoading, highlightedSymbols = 
                                                     minWidth: "110px",
                                                     minHeight: "38px",
                                                     textAlign: "center",
-                                                    padding: "0 1.1rem"
+                                                    padding: "0 1.1rem",
+                                                    boxSizing: "border-box",
+                                                    boxShadow: "0 1px 4px 0 rgba(58, 130, 246, 0.08)",
                                                 }}
                                             >
                           Optimal
