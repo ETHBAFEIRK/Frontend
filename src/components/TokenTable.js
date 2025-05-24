@@ -40,12 +40,37 @@ function TokenTable({ tokens, onOpenSuggestions, isLoading }) {
               <td>{token.quantity}</td>
               <td>{token.apr || 'N/A'}</td>
               <td>{token.maxApr || 'N/A'}</td>
-              <td>
+              <td style={{ display: 'flex', gap: '0.5em', alignItems: 'center' }}>
                 <button
                   onClick={() => onOpenSuggestions(token)}
                   className="suggestions-button"
                 >
                   How to do it?
+                </button>
+                <button
+                  style={{
+                    fontSize: '0.75em',
+                    padding: '2px 8px',
+                    marginLeft: '4px',
+                    borderRadius: '4px',
+                    border: '1px solid #888',
+                    background: '#f5f5f5',
+                    cursor: 'pointer'
+                  }}
+                  title="Compute best rates"
+                  onClick={async (e) => {
+                    e.stopPropagation();
+                    try {
+                      const resp = await fetch('http://localhost:3000/rates');
+                      if (!resp.ok) throw new Error('Failed to fetch rates');
+                      const data = await resp.json();
+                      console.log('Rates:', data);
+                    } catch (err) {
+                      console.error('Error fetching rates:', err);
+                    }
+                  }}
+                >
+                  Compute
                 </button>
               </td>
             </tr>
