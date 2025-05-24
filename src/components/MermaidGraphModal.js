@@ -8,7 +8,7 @@ import Mermaid from './Mermaid';
  */
 function buildSubgraphFromSource(rates, sourceSymbol) {
   if (!Array.isArray(rates) || !sourceSymbol) return '';
-  // Build adjacency list and edge info
+  // Build adjacency list and edge info (case-insensitive)
   const adj = {};
   const edgeInfo = {};
   const nodes = new Set();
@@ -24,13 +24,13 @@ function buildSubgraphFromSource(rates, sourceSymbol) {
     edgeInfo[`${from}|${to}`].push({ kind: rate.output_kind || '', apy: rate.apy });
   }
 
-  // Find all best-APY nodes reachable from source
-  // We'll do BFS from source, and for each node, keep the best APY path to it
+  // Find all best-APY nodes reachable from source (case-insensitive)
   const bestApy = {};
   const prev = {};
   const bestKind = {};
-  const queue = [{ symbol: sourceSymbol.toUpperCase(), apy: 0 }];
-  bestApy[sourceSymbol.toUpperCase()] = 0;
+  const src = (sourceSymbol || '').toUpperCase();
+  const queue = [{ symbol: src, apy: 0 }];
+  bestApy[src] = 0;
 
   while (queue.length > 0) {
     const { symbol, apy } = queue.shift();
@@ -51,7 +51,7 @@ function buildSubgraphFromSource(rates, sourceSymbol) {
   }
 
   // Find the maximum APY among all reachable nodes (excluding the source)
-  const bestNodes = Object.keys(bestApy).filter(n => n !== sourceSymbol.toUpperCase());
+  const bestNodes = Object.keys(bestApy).filter(n => n !== src);
   let maxApy = null;
   for (const n of bestNodes) {
     if (maxApy === null || bestApy[n] > maxApy) {
@@ -61,9 +61,9 @@ function buildSubgraphFromSource(rates, sourceSymbol) {
   // Only keep end nodes where apy == maxApy
   const endNodes = bestNodes.filter(n => bestApy[n] === maxApy);
 
-  // For each end node, reconstruct the path from source
+  // For each end node, reconstruct the path from source (case-insensitive)
   const edges = [];
-  const nodeSet = new Set([sourceSymbol.toUpperCase()]);
+  const nodeSet = new Set([src]);
   for (const node of endNodes) {
     let curr = node;
     const pathVisited = new Set();
@@ -80,7 +80,7 @@ function buildSubgraphFromSource(rates, sourceSymbol) {
       nodeSet.add(from);
       nodeSet.add(to);
       curr = from;
-      if (curr === sourceSymbol.toUpperCase()) break;
+      if (curr === src) break;
     }
   }
 
@@ -235,7 +235,7 @@ const MermaidGraphModal = ({ rates, tokens }) => {
 
   React.useEffect(() => {
     const handler = (e) => {
-      // If event.detail.token is present, use its symbol as source
+      // If event.detail.token is present, use its symbol as source (case-insensitive)
       const token = e.detail && e.detail.token;
       if (token && token.symbol) {
         setSourceSymbol(token.symbol);
@@ -482,7 +482,7 @@ const MermaidGraphModal = ({ rates, tokens }) => {
             flex: 1
           }}>
             {mode === 'default' && sourceSymbol
-              ? `Restaking Paths from ${sourceSymbol}${clickedNode && clickedNode._mainPageToken && clickedNode._mainPageToken.quantity !== undefined ? ` (${clickedNode._mainPageToken.quantity})` : ''}`
+              ? `Restaking Paths from ${typeof sourceSymbol === "string" ? sourceSymbol.toUpperCase() : sourceSymbol}${clickedNode && clickedNode._mainPageToken && clickedNode._mainPageToken.quantity !== undefined ? ` (${clickedNode._mainPageToken.quantity})` : ''}`
               : 'Full Restaking Graph'}
           </h2>
           <button
