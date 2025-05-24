@@ -121,8 +121,8 @@ function buildSubgraphFromSource(rates, sourceSymbol) {
         label = `${node}`;
       }
     }
-    // Over-escape newlines for Mermaid: replace \n with \\n
-    label = label.replace(/\n/g, '\\n');
+    // Replace newlines in label with " -- "
+    label = label.replace(/\n/g, ' -- ');
     mermaid.push(`    ${node}["${label}"]`);
   }
   for (const { from, to, kind } of uniqueEdges) {
@@ -229,8 +229,8 @@ function buildMermaidGraph(rates) {
         label = `${node}`;
       }
     }
-    // Over-escape newlines for Mermaid: replace \n with \\n
-    label = label.replace(/\n/g, '\\n');
+    // Replace newlines in label with " -- "
+    label = label.replace(/\n/g, ' -- ');
     mermaid.push(`    ${node}["${label}"]`);
   }
   for (const [from_token, to_token, label] of pruned_edges) {
