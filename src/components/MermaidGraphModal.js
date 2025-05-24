@@ -274,31 +274,48 @@ const MermaidGraphModal = ({ rates }) => {
         }}
         onClick={e => e.stopPropagation()}
       >
-        <button
-          className="modal-close-button"
-          style={{
-            position: "absolute",
-            top: 18,
-            right: 22,
-            zIndex: 2100,
-            fontSize: "2.1rem",
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          marginTop: "0.5rem",
+          marginBottom: "1.2rem",
+          minHeight: "2.6rem"
+        }}>
+          <h2 style={{
             color: "#232323",
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            lineHeight: 1,
-            fontWeight: 700,
-            transition: "color 0.2s"
-          }}
-          onClick={() => setIsOpen(false)}
-        >
-          &times;
-        </button>
-        <h2 style={{ color: "#232323", textAlign: "center", margin: "2rem 0 1rem 0", fontSize: "2.2rem", fontWeight: 800, letterSpacing: "-1px" }}>
-          {mode === 'default' && sourceSymbol
-            ? `Restaking Paths from ${sourceSymbol}`
-            : 'Full Restaking Graph'}
-        </h2>
+            textAlign: "left",
+            margin: 0,
+            fontSize: "2.2rem",
+            fontWeight: 800,
+            letterSpacing: "-1px",
+            lineHeight: 1.1,
+            flex: 1
+          }}>
+            {mode === 'default' && sourceSymbol
+              ? `Restaking Paths from ${sourceSymbol}`
+              : 'Full Restaking Graph'}
+          </h2>
+          <button
+            className="modal-close-button"
+            style={{
+              position: "static",
+              marginLeft: "1.2rem",
+              fontSize: "2.1rem",
+              color: "#232323",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              lineHeight: 1,
+              fontWeight: 700,
+              transition: "color 0.2s"
+            }}
+            onClick={() => setIsOpen(false)}
+            aria-label="Close"
+          >
+            &times;
+          </button>
+        </div>
         <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginBottom: 8 }}>
           {mode === 'default' && (
             <button
