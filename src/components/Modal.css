@@ -1,26 +1,27 @@
+/* --- Zircuit Style Redesign for Modal --- */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.75); /* Dark overlay */
+  background: rgba(246, 247, 251, 0.92);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000; /* Ensure it's on top */
+  z-index: 1000;
 }
 
 .modal-content {
-  background-color: #1a1a2e; /* Dark blue/purple, same as header */
-  padding: 2rem;
-  border-radius: 8px;
-  border: 1px solid #4a4a70;
-  color: #e0e0e0;
-  width: 90%;
-  max-width: 500px; /* Max width for the modal */
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-  position: relative; /* For close button positioning */
+  background: #fff;
+  padding: 2.5rem 2.2rem 2.2rem 2.2rem;
+  border-radius: 24px;
+  border: 2.5px solid #e0e0e0;
+  color: #232323;
+  width: 95%;
+  max-width: 480px;
+  box-shadow: 0 4px 32px 0 rgba(58, 130, 246, 0.07);
+  position: relative;
   animation: fadeInModal 0.3s ease-out;
 }
 
@@ -37,25 +38,30 @@
 
 .modal-close-button {
   position: absolute;
-  top: 10px;
-  right: 15px;
+  top: 18px;
+  right: 22px;
   background: none;
   border: none;
-  color: #e0e0e0;
-  font-size: 1.8rem;
+  color: #232323;
+  font-size: 2.1rem;
   cursor: pointer;
   line-height: 1;
+  font-weight: 700;
+  transition: color 0.2s;
 }
 
 .modal-close-button:hover {
-  color: #00ffff; /* Cyan on hover */
+  color: #3b82f6;
 }
 
 .modal-content h2 {
-  color: #00ffff; /* Cyan */
+  color: #232323;
   margin-top: 0;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.7rem;
   text-align: center;
+  font-size: 1.7rem;
+  font-weight: 800;
+  letter-spacing: -1px;
 }
 
 .suggestions-list ul {
@@ -64,29 +70,35 @@
 }
 
 .suggestions-list li {
-  background-color: #2a2a4e; /* Darker background for list items */
-  padding: 0.75rem;
-  margin-bottom: 0.5rem;
-  border-radius: 4px;
-  border-left: 3px solid #00ffff; /* Accent border */
+  background: #f8f5ef;
+  padding: 0.85rem 1.1rem;
+  margin-bottom: 0.7rem;
+  border-radius: 10px;
+  border-left: 4px solid #6ad1e3;
+  color: #232323;
+  font-size: 1.08rem;
+  font-weight: 500;
 }
 
 .modal-actions {
-  margin-top: 1.5rem;
+  margin-top: 2.2rem;
   text-align: right;
 }
 
 .action-button {
-  padding: 0.75rem 1.5rem;
-  background-color: #00ffff;
-  color: #101020;
+  padding: 0.85rem 2.1rem;
+  background: linear-gradient(90deg, #6ad1e3 0%, #3b82f6 100%);
+  color: #fff;
   border: none;
-  border-radius: 4px;
-  font-weight: bold;
+  border-radius: 32px;
+  font-weight: 700;
+  font-size: 1.05rem;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 1px 4px 0 rgba(58, 130, 246, 0.08);
 }
 
 .action-button:hover {
-  background-color: #00e0e0;
+  background: linear-gradient(90deg, #3b82f6 0%, #6ad1e3 100%);
+  box-shadow: 0 4px 16px 0 rgba(58, 130, 246, 0.13);
 }

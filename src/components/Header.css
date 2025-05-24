@@ -1,17 +1,23 @@
+/* --- Zircuit Style Redesign for Header --- */
 .App-header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 2rem;
-  background-color: #1a1a2e; /* Dark blue/purple */
-  color: #e0e0e0; /* Light grey text */
-  border-bottom: 1px solid #4a4a70; /* Slightly lighter border */
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2.5rem 0 1.5rem 0;
+  background: none;
+  color: #232323;
+  border: none;
+  position: relative;
+  z-index: 10;
 }
 
 .logo {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #00ffff; /* Cyan for a futuristic feel */
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #232323;
+  letter-spacing: -1px;
+  margin-right: 2.5rem;
+  font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
 }
 
 .header-spacer {
@@ -21,89 +27,92 @@
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 2.2rem;
 }
 
 .network-selector select {
-  padding: 0.5rem 1rem;
-  border: 1px solid #4a4a70;
-  border-radius: 4px;
-  background-color: #2a2a4e; /* Darker background for selector */
-  color: #e0e0e0; /* Light grey text */
-  cursor: pointer; /* Indicates it's interactive */
-  font-size: 0.9rem;
-  min-width: 150px; /* Give it some base width */
+  padding: 0.6rem 1.2rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  background-color: #fff;
+  color: #232323;
+  cursor: pointer;
+  font-size: 1.05rem;
+  min-width: 160px;
+  font-weight: 500;
+  box-shadow: 0 1px 4px 0 rgba(0,0,0,0.04);
+  transition: border 0.2s;
 }
 
-.network-selector select:hover {
-  background-color: #3a3a5e;
-}
-
+.network-selector select:hover,
 .network-selector select:focus {
+  border-color: #6ad1e3;
   outline: none;
-  border-color: #00ffff; /* Cyan focus border */
 }
 
 .network-selector select option {
-  background-color: #2a2a4e;
-  color: #e0e0e0;
+  background-color: #fff;
+  color: #232323;
 }
 
-
 .connect-wallet-button {
-  padding: 0.75rem 1.5rem;
-  background-color: #00ffff; /* Cyan */
-  color: #101020; /* Dark text on bright button */
+  padding: 0.85rem 2.1rem;
+  background: linear-gradient(90deg, #6ad1e3 0%, #3b82f6 100%);
+  color: #fff;
   border: none;
-  border-radius: 4px;
-  font-weight: bold;
+  border-radius: 32px;
+  font-weight: 700;
+  font-size: 1.1rem;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  box-shadow: 0 2px 8px 0 rgba(58, 130, 246, 0.08);
+  transition: background 0.2s, box-shadow 0.2s;
 }
 
 .connect-wallet-button:hover {
-  background-color: #00e0e0; /* Slightly darker cyan on hover */
+  background: linear-gradient(90deg, #3b82f6 0%, #6ad1e3 100%);
+  box-shadow: 0 4px 16px 0 rgba(58, 130, 246, 0.13);
 }
 
 .wallet-info {
-  background-color: #00ffff; /* Accent color (Cyan) */
-  color: #101020; /* Dark text for contrast on cyan */
-  padding: 0.6rem 1rem;
-  border-radius: 4px;
-  font-weight: bold;
+  background: #fff;
+  color: #232323;
+  padding: 0.7rem 1.3rem;
+  border-radius: 32px;
+  font-weight: 700;
   cursor: pointer;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  text-align: center;
-  font-size: 0.9rem;
-  white-space: nowrap;
+  font-size: 1.05rem;
+  box-shadow: 0 1px 4px 0 rgba(0,0,0,0.04);
+  border: 2px solid #e0e0e0;
+  transition: border 0.2s, box-shadow 0.2s;
 }
 
 .wallet-info:hover {
-  background-color: #00e0e0; /* Slightly darker cyan on hover */
-  box-shadow: 0 0 5px #00ffff;
+  border: 2px solid #6ad1e3;
+  box-shadow: 0 4px 16px 0 rgba(58, 130, 246, 0.13);
 }
 
 /* Toggle Switch Styles */
 .toggle-switch-container {
   display: flex;
   align-items: center;
-  gap: 0.75rem; /* Space between label and switch */
-  color: #e0e0e0;
-  margin-right: 0.5rem; /* Add some spacing if next to another element */
+  gap: 0.7rem;
+  color: #232323;
+  margin-right: 0.5rem;
 }
 
 .toggle-label {
-  font-size: 0.9rem;
-  user-select: none; /* Prevent text selection */
-  white-space: nowrap; /* Prevent label from wrapping */
+  font-size: 1.05rem;
+  user-select: none;
+  white-space: nowrap;
+  font-weight: 500;
 }
 
 .toggle-switch {
   position: relative;
   display: inline-block;
-  width: 50px;
-  height: 24px;
-  flex-shrink: 0; /* Prevent switch from shrinking */
+  width: 48px;
+  height: 26px;
+  flex-shrink: 0;
 }
 
 .toggle-switch input {
@@ -119,38 +128,32 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #4a4a70; /* OFF state */
+  background-color: #e0e0e0;
   transition: .4s;
+  border-radius: 26px;
 }
 
 .slider:before {
   position: absolute;
   content: "";
-  height: 18px;
-  width: 18px;
+  height: 20px;
+  width: 20px;
   left: 3px;
   bottom: 3px;
-  background-color: white;
+  background-color: #fff;
   transition: .4s;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px 0 rgba(0,0,0,0.08);
 }
 
 input:checked + .slider {
-  background-color: #00ffff; /* ON state - Cyan */
+  background: linear-gradient(90deg, #6ad1e3 0%, #3b82f6 100%);
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px #00ffff;
+  box-shadow: 0 0 1px #6ad1e3;
 }
 
 input:checked + .slider:before {
-  transform: translateX(26px);
-}
-
-/* Rounded sliders */
-.slider.round {
-  border-radius: 24px;
-}
-
-.slider.round:before {
-  border-radius: 50%;
+  transform: translateX(22px);
 }

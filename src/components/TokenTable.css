@@ -1,93 +1,115 @@
+/* --- Zircuit Style Redesign for Token Table --- */
 .token-table-container {
-  padding: 1rem;
-  margin: 1rem auto; /* Centered with auto margins */
-  background-color: #1e1e3f;
-  border-radius: 8px;
-  border: 1px solid #4a4a70;
-  color: #e0e0e0;
-  width: 90%; /* Adjust width as needed */
-  max-width: 1000px; /* Max width for larger screens */
-  overflow-x: auto; /* Allow horizontal scrolling on small screens if table is too wide */
+  padding: 2.2rem 2.5rem;
+  margin: 2.5rem auto 0 auto;
+  background: #fff;
+  border-radius: 24px;
+  border: 2.5px solid #e0e0e0;
+  color: #232323;
+  width: 95%;
+  max-width: 700px;
   box-sizing: border-box;
+  box-shadow: 0 4px 32px 0 rgba(58, 130, 246, 0.07);
 }
 
 .token-table-container h2 {
-  color: #00ffff;
+  color: #232323;
   margin-top: 0;
-  margin-bottom: 1rem;
+  margin-bottom: 2.2rem;
   text-align: center;
+  font-size: 2.1rem;
+  font-weight: 800;
+  letter-spacing: -1px;
 }
 
 .token-table {
   width: 100%;
-  border-collapse: collapse;
-  min-width: 600px;
+  border-collapse: separate;
+  border-spacing: 0 0.7rem;
+  min-width: 520px;
+  background: none;
 }
 
 @media (max-width: 700px) {
   .token-table {
     min-width: 0;
-    font-size: 0.95rem;
+    font-size: 0.98rem;
   }
 }
 
 .token-table th,
 .token-table td {
-  padding: 0.75rem 1rem;
+  padding: 1.1rem 1.2rem;
   text-align: left;
-  border-bottom: 1px solid #3a3a5e; /* Separator lines */
+  border-bottom: none;
+  background: none;
 }
 
 .token-table th {
-  background-color: #2a2a4e; /* Header background */
-  color: #00ffff; /* Header text color */
-  font-weight: bold;
+  background: none;
+  color: #3b82f6;
+  font-weight: 700;
+  font-size: 1.1rem;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.token-table tbody tr {
+  background: #f8f5ef;
+  border-radius: 16px;
+  box-shadow: 0 1px 8px 0 rgba(58, 130, 246, 0.04);
+  transition: box-shadow 0.2s, background 0.2s;
 }
 
 .token-table tbody tr:hover {
-  background-color: #2a2a4e; /* Hover effect for rows */
+  background: #e6f0f7;
+  box-shadow: 0 2px 16px 0 rgba(58, 130, 246, 0.10);
 }
 
 .token-table td {
-  color: #c0c0c0;
+  color: #232323;
+  font-size: 1.08rem;
+  border-bottom: none;
 }
 
 .token-table td[data-label="Token"] img {
-  margin-right: 0.5em;
+  margin-right: 0.7em;
   vertical-align: middle;
   background: #fff;
   border-radius: 50%;
-  width: 22px;
-  height: 22px;
+  width: 28px;
+  height: 28px;
   object-fit: contain;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.07);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.10);
 }
 
 .suggestions-button {
-  padding: 0.5rem 1rem;
-  background-color: #00ffff;
-  color: #101020;
+  padding: 0.7rem 1.5rem;
+  background: linear-gradient(90deg, #6ad1e3 0%, #3b82f6 100%);
+  color: #fff;
   border: none;
-  border-radius: 4px;
-  font-weight: bold;
+  border-radius: 32px;
+  font-weight: 700;
+  font-size: 1.05rem;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+  box-shadow: 0 1px 4px 0 rgba(58, 130, 246, 0.08);
 }
 
 .suggestions-button:hover {
-  background-color: #00e0e0;
-  transform: translateY(-1px);
+  background: linear-gradient(90deg, #3b82f6 0%, #6ad1e3 100%);
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 4px 16px 0 rgba(58, 130, 246, 0.13);
 }
 
 .suggestions-button:active {
-  transform: translateY(0px);
+  transform: translateY(0px) scale(0.98);
 }
 
 /* Responsive adjustments for the table */
 @media (max-width: 600px) {
   .token-table-container {
     margin: 0.5rem;
-    padding: 0.5rem;
+    padding: 0.7rem 0.2rem;
     width: 99vw;
     max-width: 100vw;
     border-radius: 0;
@@ -96,17 +118,17 @@
   }
   .token-table th,
   .token-table td {
-    padding: 0.4rem 0.3rem;
-    font-size: 0.92rem;
+    padding: 0.5rem 0.3rem;
+    font-size: 0.97rem;
     word-break: break-word;
   }
   .suggestions-button {
-    padding: 0.4rem 0.7rem;
-    font-size: 0.85rem;
+    padding: 0.5rem 0.8rem;
+    font-size: 0.93rem;
   }
   .token-table {
-    font-size: 0.92rem;
-    min-width: 400px;
+    font-size: 0.97rem;
+    min-width: 340px;
   }
   .token-table thead {
     display: none;
@@ -120,10 +142,10 @@
   }
   .token-table tr {
     margin-bottom: 1.2em;
-    border-bottom: 2px solid #3a3a5e;
-    background: #23234a;
-    border-radius: 6px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    border-bottom: 2px solid #e0e0e0;
+    background: #f8f5ef;
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(58,130,246,0.08);
     padding: 0.5em 0.2em;
   }
   .token-table td {
@@ -141,7 +163,7 @@
     width: 44%;
     white-space: nowrap;
     font-weight: bold;
-    color: #00ffff;
+    color: #3b82f6;
     font-size: 0.98em;
     text-align: left;
     content: attr(data-label);
@@ -149,13 +171,13 @@
   }
   .highlighted-token-row {
     background-color: #fffbe6 !important;
-    color: #222 !important;
+    color: #232323 !important;
     font-weight: bold;
   }
 }
 /* Highlighted token row for Compute results */
 .highlighted-token-row {
   background-color: #fffbe6 !important;
-  color: #222 !important;
+  color: #232323 !important;
   font-weight: bold;
 }

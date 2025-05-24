@@ -1,50 +1,58 @@
-/* General App Styles */
+/* --- Zircuit Style Redesign --- */
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Inter', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #101020; /* Dark background */
-  color: #e0e0e0; /* Light grey text */
+  background: linear-gradient(180deg, #f8f5ef 0%, #e6f0f7 100%);
+  color: #232323;
+  min-height: 100vh;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 .App {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  background: none;
 }
 
 .App-content {
   flex-grow: 1;
-  padding: 1rem;
+  padding: 2.5rem 0 2rem 0;
   display: flex;
-  flex-direction: column; /* Or row, depending on desired layout for lists */
-  gap: 1rem; /* Space between token list components */
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+  background: none;
 }
 
-/* Global error message style */
 .error-message {
-  color: #ff4d4d; /* Bright red for errors */
-  background-color: #331a1a; /* Dark red background */
-  padding: 0.75rem;
-  margin: 1rem auto; /* Centered with margin */
-  border: 1px solid #ff4d4d;
-  border-radius: 4px;
+  color: #b94a48;
+  background: #fff7e6;
+  border: 1.5px solid #f5c6cb;
+  border-radius: 12px;
+  padding: 1.1rem 2rem;
+  margin: 2rem auto;
   text-align: center;
-  max-width: 500px; /* Limit width */
+  font-size: 1.1rem;
+  max-width: 600px;
+  box-shadow: 0 2px 12px 0 rgba(0,0,0,0.04);
 }
 
-/* Basic responsive considerations for content area */
-@media (min-width: 768px) {
+/* Responsive content area */
+@media (min-width: 900px) {
   .App-content {
-    flex-direction: row; /* Side-by-side lists on larger screens */
-    justify-content: space-around; /* Distribute space */
+    flex-direction: row;
+    justify-content: center;
+    gap: 3.5rem;
   }
+}
 
-  .token-list-container,
-  .restaked-token-list-container {
-    flex-basis: 45%; /* Each list takes up roughly half the space */
+@media (max-width: 700px) {
+  .App-content {
+    padding: 1rem 0.2rem;
+    gap: 1.2rem;
   }
 }
