@@ -105,7 +105,12 @@ function TokenTable({tokens, onOpenSuggestions, isLoading, highlightedSymbols = 
                                     const maxApy = parseApy(token.maxApr);
 
                                     // Show "Optimal" if maxApy < currentApy or maxApy is not a number
-                                    if (isNaN(maxApy) || (!isNaN(currentApy) && maxApy < currentApy)) {
+                                    // Also show "Optimal" if maxApy == currentApy and both are known
+                                    if (
+                                        isNaN(maxApy) ||
+                                        (!isNaN(currentApy) && maxApy < currentApy) ||
+                                        (!isNaN(currentApy) && !isNaN(maxApy) && Math.abs(currentApy - maxApy) < 1e-6)
+                                    ) {
                                         return (
                                             <span
                                                 style={{
