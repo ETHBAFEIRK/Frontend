@@ -364,143 +364,17 @@ const MermaidGraphModal = ({ rates }) => {
               if (!verb) verb = "stake";
 
               // State for input amount
-              let inputAmount = "";
-              let setInputAmount = null;
-              // Use React state for input
+              // Move React state to the component level, not inside callback
               setDialogOpen(true);
-              setClickedNode(
-                (() => {
-                  const [amount, setAmount] = React.useState("");
-                  setInputAmount = setAmount;
-                  return (
-                    <div style={{
-                      width: 420,
-                      maxWidth: "90vw",
-                      background: "#23242a",
-                      borderRadius: 24,
-                      boxShadow: "0 4px 32px 0 rgba(58, 130, 246, 0.13)",
-                      padding: "2.2rem 2.2rem 1.7rem 2.2rem",
-                      color: "#fff",
-                      fontFamily: "Inter, Segoe UI, sans-serif",
-                      position: "relative"
-                    }}>
-                      <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18}}>
-                        <div style={{fontWeight: 700, fontSize: "1.1rem", color: "#fff", opacity: 0.85}}>
-                          Available to {verb}
-                        </div>
-                        {link && (
-                          <a href={link} target="_blank" rel="noopener noreferrer"
-                            style={{
-                              background: "#23242a",
-                              color: "#fff",
-                              borderRadius: 16,
-                              padding: "0.3em 1em 0.3em 1em",
-                              fontWeight: 600,
-                              fontSize: "0.98rem",
-                              textDecoration: "none",
-                              border: "1.5px solid #3b82f6",
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 8
-                            }}>
-                            {incomingToken}
-                            <span style={{
-                              display: "inline-block",
-                              width: 18,
-                              height: 18,
-                              background: "#3b82f6",
-                              borderRadius: "50%",
-                              marginLeft: 6
-                            }}></span>
-                          </a>
-                        )}
-                      </div>
-                      <div style={{fontSize: "2.1rem", fontWeight: 800, color: "#fff", marginBottom: 8}}>
-                        {availableToStake} {incomingToken}
-                      </div>
-                      <hr style={{border: "none", borderTop: "1.5px solid #444", margin: "1.2rem 0"}} />
-                      <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8}}>
-                        <div style={{fontWeight: 700, fontSize: "1.1rem", color: "#fff", opacity: 0.85}}>
-                          {verb.charAt(0).toUpperCase() + verb.slice(1)}d amount
-                        </div>
-                        <div style={{fontWeight: 700, fontSize: "1.1rem", color: "#fff", opacity: 0.85}}>
-                          APY:
-                          <span style={{color: "#4ade80", fontWeight: 800, marginLeft: 8, fontSize: "1.2rem"}}>
-                            {apy !== null && apy !== undefined ? apy : "N/A"}
-                          </span>
-                        </div>
-                      </div>
-                      <div style={{fontSize: "2.1rem", fontWeight: 800, color: "#fff", marginBottom: 8}}>
-                        0.0 {stakedAmount}
-                      </div>
-                      <div style={{margin: "1.2rem 0 0.7rem 0"}}>
-                        <label style={{fontWeight: 600, color: "#fff", marginRight: 8}}>
-                          Amount to {verb}:
-                        </label>
-                        <input
-                          type="number"
-                          min="0"
-                          max={availableToStake}
-                          step="any"
-                          value={amount}
-                          onChange={e => setAmount(e.target.value)}
-                          placeholder={`0.0 ${incomingToken}`}
-                          style={{
-                            width: 120,
-                            padding: "0.4em 0.8em",
-                            borderRadius: 8,
-                            border: "1.5px solid #3b82f6",
-                            fontSize: "1.1rem",
-                            fontWeight: 700,
-                            background: "#181a20",
-                            color: "#fff",
-                            marginLeft: 8
-                          }}
-                        />
-                        <button
-                          style={{
-                            marginLeft: 10,
-                            background: "#3b82f6",
-                            color: "#fff",
-                            border: "none",
-                            borderRadius: 8,
-                            fontWeight: 700,
-                            fontSize: "1.0rem",
-                            padding: "0.3em 1.1em",
-                            cursor: "pointer"
-                          }}
-                          onClick={() => setAmount(availableToStake)}
-                          type="button"
-                        >
-                          MAX
-                        </button>
-                      </div>
-                      <div style={{
-                        marginTop: 24,
-                        display: "flex",
-                        justifyContent: "center"
-                      }}>
-                        <button
-                          style={{
-                            background: "#3b82f6",
-                            color: "#fff",
-                            border: "none",
-                            borderRadius: 16,
-                            fontWeight: 700,
-                            fontSize: "1.15rem",
-                            padding: "0.7rem 2.2rem",
-                            cursor: "pointer",
-                            boxShadow: "0 2px 8px 0 rgba(58, 130, 246, 0.13)"
-                          }}
-                          onClick={() => { setDialogOpen(false); setClickedNode(null); }}
-                        >
-                          Execute
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })()
-              );
+              setClickedNode({
+                incomingToken,
+                availableToStake,
+                stakedAmount: nodeId,
+                apy,
+                kind,
+                link,
+                verb,
+              });
             }
           };
         }
@@ -508,6 +382,38 @@ const MermaidGraphModal = ({ rates }) => {
     }, 300);
     return () => clearTimeout(timeout);
   }, [graphCode, isOpen, mode]);
+
+  // --- Dialog state for stake modal ---
+  const [stakeDialog, setStakeDialog] = useState({
+    open: false,
+    incomingToken: "",
+    availableToStake: "",
+    stakedAmount: "",
+    apy: null,
+    kind: "",
+    link: "",
+    verb: "",
+    amount: "",
+  });
+
+  // When clickedNode is set, open the stake dialog and populate fields
+  useEffect(() => {
+    if (dialogOpen && clickedNode && typeof clickedNode === "object") {
+      setStakeDialog({
+        open: true,
+        incomingToken: clickedNode.incomingToken,
+        availableToStake: clickedNode.availableToStake,
+        stakedAmount: clickedNode.stakedAmount,
+        apy: clickedNode.apy,
+        kind: clickedNode.kind,
+        link: clickedNode.link,
+        verb: clickedNode.verb,
+        amount: "",
+      });
+    } else {
+      setStakeDialog((prev) => ({ ...prev, open: false }));
+    }
+  }, [dialogOpen, clickedNode]);
 
   if (!isOpen) return null;
 
@@ -684,7 +590,7 @@ const MermaidGraphModal = ({ rates }) => {
         >
           <div style={{ width: "100%", height: "100%" }} ref={mermaidContainerRef}>
             <Mermaid chart={graphCode} id="mermaid-graph-modal" />
-            {dialogOpen && clickedNode && (
+            {stakeDialog.open && (
               <div
                 style={{
                   position: "fixed",
@@ -702,9 +608,9 @@ const MermaidGraphModal = ({ rates }) => {
               >
                 <div
                   style={{
-                    background: "#fff",
+                    background: "#23242a",
                     border: "2px solid #3b82f6",
-                    borderRadius: 18,
+                    borderRadius: 24,
                     padding: "2.2rem 2.5rem",
                     minWidth: 320,
                     minHeight: 120,
@@ -713,7 +619,8 @@ const MermaidGraphModal = ({ rates }) => {
                     flexDirection: "column",
                     alignItems: "center",
                     justifyContent: "center",
-                    position: "relative"
+                    position: "relative",
+                    color: "#fff"
                   }}
                   onClick={e => e.stopPropagation()}
                 >
@@ -724,7 +631,7 @@ const MermaidGraphModal = ({ rates }) => {
                       right: 18,
                       background: "none",
                       border: "none",
-                      color: "#232323",
+                      color: "#fff",
                       fontSize: "1.7rem",
                       cursor: "pointer",
                       fontWeight: 700
@@ -734,11 +641,143 @@ const MermaidGraphModal = ({ rates }) => {
                   >
                     &times;
                   </button>
-                  <h3 style={{ margin: "0 0 1.2rem 0", color: "#3b82f6", fontWeight: 800 }}>
-                    {clickedNode}
-                  </h3>
-                  <div style={{ fontSize: "1.15rem", color: "#232323", textAlign: "center" }}>
-                    In the restaking path
+                  {/* --- Stake Dialog Content --- */}
+                  <div style={{ width: 420, maxWidth: "90vw" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
+                      <div style={{ fontWeight: 700, fontSize: "1.1rem", color: "#fff", opacity: 0.85 }}>
+                        Available to {stakeDialog.verb}
+                        <span style={{
+                          display: "inline-block",
+                          width: 8,
+                          height: 8,
+                          background: "#4ade80",
+                          borderRadius: "50%",
+                          marginLeft: 8,
+                          verticalAlign: "middle"
+                        }}></span>
+                      </div>
+                      {stakeDialog.link && (
+                        <a href={stakeDialog.link} target="_blank" rel="noopener noreferrer"
+                          style={{
+                            background: "#23242a",
+                            color: "#fff",
+                            borderRadius: 16,
+                            padding: "0.3em 1em 0.3em 1em",
+                            fontWeight: 600,
+                            fontSize: "0.98rem",
+                            textDecoration: "none",
+                            border: "1.5px solid #3b82f6",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 8
+                          }}>
+                          {stakeDialog.incomingToken}
+                          <span style={{
+                            display: "inline-block",
+                            width: 18,
+                            height: 18,
+                            background: "#3b82f6",
+                            borderRadius: "50%",
+                            marginLeft: 6
+                          }}></span>
+                        </a>
+                      )}
+                    </div>
+                    <div style={{ fontSize: "2.1rem", fontWeight: 800, color: "#fff", marginBottom: 8 }}>
+                      {stakeDialog.availableToStake} {stakeDialog.incomingToken}
+                    </div>
+                    <hr style={{ border: "none", borderTop: "1.5px solid #444", margin: "1.2rem 0" }} />
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                      <div style={{ fontWeight: 700, fontSize: "1.1rem", color: "#fff", opacity: 0.85 }}>
+                        {stakeDialog.verb.charAt(0).toUpperCase() + stakeDialog.verb.slice(1)}d amount
+                      </div>
+                      <div style={{ fontWeight: 700, fontSize: "1.1rem", color: "#fff", opacity: 0.85 }}>
+                        Lido APR
+                        <span style={{
+                          marginLeft: 6,
+                          fontSize: "1.1rem",
+                          color: "#fff",
+                          opacity: 0.7,
+                          cursor: "pointer"
+                        }}
+                          title="Annual Percentage Rate for Lido staking"
+                        >&#9432;</span>
+                        <span style={{ color: "#4ade80", fontWeight: 800, marginLeft: 8, fontSize: "1.2rem" }}>
+                          {stakeDialog.apy !== null && stakeDialog.apy !== undefined ? (
+                            typeof stakeDialog.apy === "number"
+                              ? stakeDialog.apy
+                              : String(stakeDialog.apy)
+                          ) : "N/A"}
+                        </span>
+                      </div>
+                    </div>
+                    <div style={{ fontSize: "2.1rem", fontWeight: 800, color: "#fff", marginBottom: 8 }}>
+                      0.0 {stakeDialog.stakedAmount}
+                    </div>
+                    <div style={{ margin: "1.2rem 0 0.7rem 0" }}>
+                      <label style={{ fontWeight: 600, color: "#fff", marginRight: 8 }}>
+                        Amount to {stakeDialog.verb}:
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        max={stakeDialog.availableToStake}
+                        step="any"
+                        value={stakeDialog.amount}
+                        onChange={e => setStakeDialog(sd => ({ ...sd, amount: e.target.value }))}
+                        placeholder={`0.0 ${stakeDialog.incomingToken}`}
+                        style={{
+                          width: 120,
+                          padding: "0.4em 0.8em",
+                          borderRadius: 8,
+                          border: "1.5px solid #3b82f6",
+                          fontSize: "1.1rem",
+                          fontWeight: 700,
+                          background: "#181a20",
+                          color: "#fff",
+                          marginLeft: 8
+                        }}
+                      />
+                      <button
+                        style={{
+                          marginLeft: 10,
+                          background: "#3b82f6",
+                          color: "#fff",
+                          border: "none",
+                          borderRadius: 8,
+                          fontWeight: 700,
+                          fontSize: "1.0rem",
+                          padding: "0.3em 1.1em",
+                          cursor: "pointer"
+                        }}
+                        onClick={() => setStakeDialog(sd => ({ ...sd, amount: stakeDialog.availableToStake }))}
+                        type="button"
+                      >
+                        MAX
+                      </button>
+                    </div>
+                    <div style={{
+                      marginTop: 24,
+                      display: "flex",
+                      justifyContent: "center"
+                    }}>
+                      <button
+                        style={{
+                          background: "#3b82f6",
+                          color: "#fff",
+                          border: "none",
+                          borderRadius: 16,
+                          fontWeight: 700,
+                          fontSize: "1.15rem",
+                          padding: "0.7rem 2.2rem",
+                          cursor: "pointer",
+                          boxShadow: "0 2px 8px 0 rgba(58, 130, 246, 0.13)"
+                        }}
+                        onClick={() => { setDialogOpen(false); setClickedNode(null); }}
+                      >
+                        Execute
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
