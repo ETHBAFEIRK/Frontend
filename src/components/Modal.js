@@ -203,33 +203,7 @@ function Modal({ isOpen, onClose, token, rates }) {
           >
             Close
           </button>
-          <button
-            className="action-button"
-            style={{ background: '#222', color: '#00ffff', border: '1px solid #00ffff' }}
-            onClick={handleHowToDoItClick}
-            title="Alt-click or Cmd-click to show the full restaking graph"
-          >
-            Show Full Graph (Alt/Cmd+Click)
-          </button>
         </div>
-        {/* Always show the token-specific graph if available */}
-        {tokenGraphCode && (
-          <div style={{ marginTop: '2em', background: '#181830', borderRadius: 8, padding: 12, overflowX: 'auto' }}>
-            <div ref={tokenMermaidRef} />
-            <pre style={{ fontSize: 12, color: '#888', marginTop: 8, whiteSpace: 'pre-wrap' }}>
-              {tokenGraphCode}
-            </pre>
-          </div>
-        )}
-        {/* Show the full graph if requested */}
-        {showGraph && (
-          <div style={{ marginTop: '2em', background: '#181830', borderRadius: 8, padding: 12, overflowX: 'auto' }}>
-            <div ref={mermaidRef} />
-            <pre style={{ fontSize: 12, color: '#888', marginTop: 8, whiteSpace: 'pre-wrap' }}>
-              {graphCode}
-            </pre>
-          </div>
-        )}
       </div>
     </div>
   );

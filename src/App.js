@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import MermaidGraphModal from './components/MermaidGraphModal';
 import { BrowserProvider, formatEther, Contract, formatUnits } from 'ethers';
 import './App.css';
 import Header from './components/Header';
@@ -503,6 +504,7 @@ const ERC20_ABI = [
           rates={rates}
         />
       )}
+      <MermaidGraphModal rates={rates} />
     </div>
   );
 }
