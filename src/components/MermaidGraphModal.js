@@ -692,7 +692,7 @@ const MermaidGraphModal = ({ rates }) => {
                         {stakeDialog.verb.charAt(0).toUpperCase() + stakeDialog.verb.slice(1)}d amount
                       </div>
                       <div style={{ fontWeight: 700, fontSize: "1.1rem", color: "#fff", opacity: 0.85 }}>
-                        Lido APR
+                        APY
                         <span style={{
                           marginLeft: 6,
                           fontSize: "1.1rem",
