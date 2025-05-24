@@ -67,6 +67,7 @@
   cursor: pointer;
   box-shadow: 0 2px 8px 0 rgba(58, 130, 246, 0.08);
   transition: background 0.2s, box-shadow 0.2s;
+  margin-right: 1.2rem;
 }
 
 .connect-wallet-button:hover {
