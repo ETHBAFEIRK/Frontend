@@ -26,17 +26,45 @@ function TokenTable({tokens, onOpenSuggestions, isLoading, highlightedSymbols = 
     // Normalize highlightedSymbols to uppercase for comparison
     const highlightSet = new Set((highlightedSymbols || []).map(s => (s || '').toUpperCase()));
 
-    // Set of tokens with icons (should match backend and graph_tokens.py)
-    const tokenIcons = new Set([
-        "ETH", "WETH", "stETH", "wstETH", "ezETH", "pzETH", "STONE", "xPufETH", "mstETH", "weETH", "egETH",
-        "inwstETH", "rsETH", "LsETH", "USDC", "USDT", "USDe", "FBTC", "LBTC", "mBTC", "pumpBTC", "mswETH",
-        "mwBETH", "mETH", "rstETH", "steakLRT", "Re7LRT", "amphrETH", "rswETH", "swETH", "weETHs"
-    ]);
+    // Token icons map (should match backend and graph_tokens.py)
+    const tokenIcons = {
+        "eth":      "https://static.zircuit.com/stake/app-dbbe0da3d/_next/static/media/eth-logo.9c7e160a.svg",
+        "weth":     "https://static.zircuit.com/stake/app-dbbe0da3d/_next/static/media/eth-logo.9c7e160a.svg:",
+        "steth":    "https://static.zircuit.com/stake/app-dbbe0da3d/_next/static/media/wsteth-logo.70d80504.svg",
+        "wsteth":   "https://static.zircuit.com/stake/app-dbbe0da3d/_next/static/media/wsteth-logo.70d80504.svg",
+        "ezeth":    "https://static.zircuit.com/stake/app-dbbe0da3d/_next/static/media/ezeth-logo.6809574f.svg",
+        "pzeth":    "https://static.zircuit.com/stake/app-dbbe0da3d/_next/static/media/pzeth-logo.c24e47cd.svg",
+        "stone":    "https://static.zircuit.com/stake/app-dbbe0da3d/_next/static/media/stone-logo.ee085a0a.svg",
+        "xpufeth":  "https://static.zircuit.com/stake/app-dbbe0da3d/_next/static/media/xpufeth-logo.1bfb3c5a.svg",
+        "msteth":   "https://static.zircuit.com/stake/app-dbbe0da3d/_next/static/media/msteth-logo.70d80504.svg",
+        "weeth":    "https://static.zircuit.com/stake/app-dbbe0da3d/_next/static/media/weeth-logo.209d6604.svg",
+        "egeth":    "https://static.zircuit.com/stake/app-dbbe0da3d/_next/static/media/egeth-logo.bd7e9357.svg",
+        "inwsteth": "https://static.zircuit.com/stake/app-dbbe0da3d/_next/static/media/inwsteths-logo.2406ea8b.svg",
+        "rseth":    "https://static.zircuit.com/stake/app-dbbe0da3d/_next/static/media/rseth-logo.948cf45f.svg",
+        "lseth":    "https://static.zircuit.com/stake/app-dbbe0da3d/_next/static/media/lseth-logo.6dab9ca0.svg",
+        "usdc":     "https://static.zircuit.com/stake/app-dbbe0da3d/_next/static/media/usdc-logo.ffc33eac.svg",
+        "usdt":     "https://static.zircuit.com/stake/app-dbbe0da3d/_next/static/media/usdt-logo.b1f7c50b.svg",
+        "usde":     "https://static.zircuit.com/stake/app-dbbe0da3d/_next/static/media/usde-logo.c17debe1.svg",
+        "fbtc":     "https://static.zircuit.com/stake/app-dbbe0da3d/_next/static/media/fbtc-logo.51f2d301.svg",
+        "lbtc":     "https://static.zircuit.com/stake/app-dbbe0da3d/_next/static/media/lbtc-logo.fd05641f.svg",
+        "mbtc":     "https://static.zircuit.com/stake/app-dbbe0da3d/_next/static/media/mbtc-logo.3e52220b.svg",
+        "pumpbtc":  "https://static.zircuit.com/stake/app-dbbe0da3d/_next/static/media/pumpbtc-logo.af55710d.svg",
+        "msweth":   "https://static.zircuit.com/stake/app-dbbe0da3d/_next/static/media/msweth-logo.e4de1bfd.svg",
+        "mwbeth":   "https://static.zircuit.com/stake/app-dbbe0da3d/_next/static/media/mwbeth-logo.857f1a84.svg",
+        "meth":     "https://static.zircuit.com/stake/app-dbbe0da3d/_next/static/media/meth-logo.2d380f4a.svg",
+        "rsteth":   "https://static.zircuit.com/stake/app-dbbe0da3d/_next/static/media/rsteth-logo.9cef011b.svg",
+        "steaklrt": "https://static.zircuit.com/stake/app-dbbe0da3d/_next/static/media/steaklrt-logo.9cef011b.svg",
+        "re7lrt":   "https://static.zircuit.com/stake/app-dbbe0da3d/_next/static/media/re7lrt-logo.9cef011b.svg",
+        "amphreth": "https://static.zircuit.com/stake/app-dbbe0da3d/_next/static/media/amphreth-logo.9cef011b.svg",
+        "rsweth":   "https://static.zircuit.com/stake/app-dbbe0da3d/_next/static/media/rsweth-logo.996367c4.svg",
+        "sweth":    "https://static.zircuit.com/stake/app-dbbe0da3d/_next/static/media/sweth-logo.037fa270.svg",
+        "weeths":   "https://static.zircuit.com/stake/app-dbbe0da3d/_next/static/media/weeths-logo.70e83562.svg",
+    };
 
-    // Optionally filter tokens to only those with icons
+    // Optionally filter tokens to only those with icons (case-insensitive)
     const filteredTokens = showWithoutIcons
         ? tokens
-        : tokens.filter(token => tokenIcons.has((token.symbol || '').toUpperCase()));
+        : tokens.filter(token => tokenIcons.hasOwnProperty((token.symbol || '').toLowerCase()));
 
     return (
         <div className="token-table-container">
@@ -66,8 +94,14 @@ function TokenTable({tokens, onOpenSuggestions, isLoading, highlightedSymbols = 
                         }
                     }
 
-                    // Use from_icon and project_link from bestRate if available
-                    const iconUrl = bestRate && bestRate.from_icon ? bestRate.from_icon : null;
+                    // Use from_icon and project_link from bestRate if available, else use our tokenIcons map
+                    let iconUrl = bestRate && bestRate.from_icon ? bestRate.from_icon : null;
+                    if (!iconUrl && token.symbol) {
+                        const iconKey = (token.symbol || '').toLowerCase();
+                        if (tokenIcons.hasOwnProperty(iconKey)) {
+                            iconUrl = tokenIcons[iconKey];
+                        }
+                    }
                     const projectLink = bestRate && bestRate.project_link ? bestRate.project_link : null;
 
                     // Click handler for token cell
