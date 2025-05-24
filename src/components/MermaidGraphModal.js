@@ -271,36 +271,36 @@ const MermaidGraphModal = ({ rates }) => {
     const timeout = setTimeout(() => {
       const container = document.getElementById("mermaid-graph-modal");
       if (!container) return;
-      // Mermaid renders nodes as <g> or <div> with class "node" or "nodes"
-      // We'll try to attach to SVG nodes with class "node"
       const svg = container.querySelector("svg");
       if (!svg) return;
-      // Try both v10 and v9+ Mermaid node selectors
       const nodeElems = svg.querySelectorAll('g.node, g[class*="node"]');
       nodeElems.forEach((nodeElem) => {
-        // Find the <title> or <text> child to get the node id
         let nodeId = null;
-        // Try to get node id from <title>
         const titleElem = nodeElem.querySelector("title");
         if (titleElem && titleElem.textContent) {
           nodeId = titleElem.textContent.trim();
         } else {
-          // Try to get from <text>
           const textElem = nodeElem.querySelector("text");
           if (textElem && textElem.textContent) {
             nodeId = textElem.textContent.trim().split(" ")[0];
           }
         }
-        if (nodeId) {
+        // Only add click for STETH or MSTETH
+        if (nodeId && (nodeId === "STETH" || nodeId === "MSTETH")) {
           nodeElem.style.cursor = "pointer";
           nodeElem.onclick = (e) => {
             e.stopPropagation();
-            setClickedNode(nodeId);
-            setDialogOpen(true);
+            // Find the label text (with APY) for this node
+            let label = nodeId;
+            const textElem = nodeElem.querySelector("text");
+            if (textElem && textElem.textContent) {
+              label = textElem.textContent.trim();
+            }
+            alert(`Node: ${nodeId}\nLabel: ${label}`);
           };
         }
       });
-    }, 300); // Wait a bit for Mermaid to render
+    }, 300);
     return () => clearTimeout(timeout);
   }, [graphCode, isOpen]);
 
